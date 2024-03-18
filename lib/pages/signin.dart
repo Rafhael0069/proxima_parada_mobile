@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/pages/signup.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class Signin extends StatefulWidget {
@@ -14,7 +15,7 @@ class _SigninState extends State<Signin> {
   final TextEditingController _controllerPassword = TextEditingController();
 
   bool _passwordVisible = false;
-  bool _loading = false;
+  final bool _loading = false;
 
   @override
   void initState() {
@@ -114,8 +115,7 @@ class _SigninState extends State<Signin> {
                     Padding(
                       padding: const EdgeInsets.only(left: 4, top: 16, right: 4),
                       child: GestureDetector(
-                        onTap: () => ShowAlertDialog.showAlertDialog(context,"Ainda não implementado :("),
-                            // () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Signup())),
+                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Signup())),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
