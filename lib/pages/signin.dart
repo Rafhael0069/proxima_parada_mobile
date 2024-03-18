@@ -29,7 +29,7 @@ class _SigninState extends State<Signin> {
   }
 
   _directToHome() {
-    ShowAlertDialog.showAlertDialog(context,"Ainda não implementado :(");
+    ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()),
     //     (Route<dynamic> route) => false);
   }
@@ -41,9 +41,6 @@ class _SigninState extends State<Signin> {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Entrar"),
-        ),
         body: Container(
           padding: const EdgeInsets.all(16),
           child: _loading
@@ -53,6 +50,13 @@ class _SigninState extends State<Signin> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 62),
+                      child: Image(
+                        image: AssetImage("assets/images/logo.png"),
+                        width: 150,
+                      ),
+                    ),
                     Container(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -115,7 +119,8 @@ class _SigninState extends State<Signin> {
                     Padding(
                       padding: const EdgeInsets.only(left: 4, top: 16, right: 4),
                       child: GestureDetector(
-                        onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Signup())),
+                        onTap: () => Navigator.pushReplacement(
+                            context, MaterialPageRoute(builder: (context) => const Signup())),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
