@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/utils/exit.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({Key? key}) : super(key: key);
@@ -12,8 +13,15 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
-    // DateTime timeBackPressed = DateTime.now();
-    return Scaffold(
+    DateTime timeBackPressed = DateTime.now();
+    return WillPopScope(
+      onWillPop: () async {
+        final difference = DateTime.now().difference(timeBackPressed);
+        final isExitWarning = difference >= const Duration(seconds: 2);
+        timeBackPressed = DateTime.now();
+        return Exit().isExitToDobleTouch(isExitWarning);
+      },
+      child: Scaffold(
         body: Container(
           color: const Color.fromARGB(255, 234, 234, 234),
           child: Center(
@@ -41,8 +49,7 @@ class _WelcomeState extends State<Welcome> {
                       // Navigator.push(context,
                       //     MaterialPageRoute(builder: (context) => const Signin()));
                     },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(45)),
+                    style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                     child: const Text(
                       "Entrar",
                       style: TextStyle(
@@ -58,8 +65,7 @@ class _WelcomeState extends State<Welcome> {
                       // Navigator.push(context,
                       //     MaterialPageRoute(builder: (context) => const Signup()));
                     },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(45)),
+                    style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                     child: const Text(
                       "Cadastra-se",
                       style: TextStyle(
@@ -72,8 +78,7 @@ class _WelcomeState extends State<Welcome> {
             ),
           ),
         ),
-      );
-
+      ),
+    );
   }
 }
-
