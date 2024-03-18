@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/pages/signin.dart';
 import 'package:proxima_parada_mobile/utils/exit.dart';
+import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({Key? key}) : super(key: key);
@@ -46,8 +48,8 @@ class _WelcomeState extends State<Welcome> {
                   padding: const EdgeInsets.only(left: 16, right: 16),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (context) => const Signin()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => const Signin()));
                     },
                     style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                     child: const Text(
@@ -62,6 +64,7 @@ class _WelcomeState extends State<Welcome> {
                   padding: const EdgeInsets.only(left: 16, top: 6, right: 16),
                   child: ElevatedButton(
                     onPressed: () {
+                      ShowAlertDialog.showAlertDialog(context,"Ainda não implementado :(");
                       // Navigator.push(context,
                       //     MaterialPageRoute(builder: (context) => const Signup()));
                     },
