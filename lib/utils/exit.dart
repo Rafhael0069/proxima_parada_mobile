@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Exit {
-  bool isExitToDobleTouch(bool isExitWarning){
+  bool isExitToDoubleTouch(bool isExitWarning){
     if (isExitWarning) {
-      final messgeToast = 'Pressione voltar novamente para sair.';
+      const messgeToast = 'Pressione voltar novamente para sair.';
       Fluttertoast.showToast(
           msg: messgeToast,
           fontSize: 18,

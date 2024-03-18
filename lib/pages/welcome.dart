@@ -19,7 +19,7 @@ class _WelcomeState extends State<Welcome> {
         final difference = DateTime.now().difference(timeBackPressed);
         final isExitWarning = difference >= const Duration(seconds: 2);
         timeBackPressed = DateTime.now();
-        return Exit().isExitToDobleTouch(isExitWarning);
+        return Exit().isExitToDoubleTouch(isExitWarning);
       },
       child: Scaffold(
         body: Container(
