@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signup.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
@@ -29,9 +30,8 @@ class _SigninState extends State<Signin> {
   }
 
   _directToHome() {
-    ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
-    // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()),
-    //     (Route<dynamic> route) => false);
+    // ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
   }
 
   @override

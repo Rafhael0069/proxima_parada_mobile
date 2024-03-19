@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
@@ -34,6 +35,15 @@ class _SignupState extends State<Signup> {
     _controllerName.text = "nome 3 teste";
     _controllerOccupation.text = "ocupação 3 teste";
     super.initState();
+  }
+
+  _createUser() async {
+    _directToHome();
+  }
+
+  _directToHome() {
+    // ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
   }
 
   @override
@@ -175,9 +185,7 @@ class _SignupState extends State<Signup> {
                           padding: const EdgeInsets.only(top: 16),
                           child: ElevatedButton(
                             //Buttom Signin
-                            onPressed: () => ShowAlertDialog.showAlertDialog(
-                                context, "Ainda não implementado :("),
-                            // onPressed: () => _createUser(),
+                            onPressed: () => _createUser(),
                             style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                             child: const Text(
                               "Cadastra-se",
