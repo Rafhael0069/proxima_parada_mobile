@@ -12,12 +12,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
+  bool _isRideVisible = true;
 
-  static final List<Widget> _telas = <Widget>[
-    FeedPage(),
-    MyRidesPage(),
-    ProfilePage(),
-  ];
+  late List<Widget> _screens = _isRideVisible
+      ? <Widget>[
+          FeedPage(),
+          MyRidesPage(),
+          ProfilePage(),
+        ]
+      : <Widget>[
+          FeedPage(),
+          ProfilePage(),
+        ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -33,14 +39,15 @@ class _HomeState extends State<Home> {
         actions: [IconButton(onPressed: () => {}, icon: Icon(Icons.menu))],
       ),
       body: Center(
-        child: _telas.elementAt(_selectedIndex),
+        child: _screens.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.feed), label: "feed"),
-          BottomNavigationBarItem(icon: Icon(Icons.post_add), label: "minhas caronas"),
+          if (_isRideVisible)
+            BottomNavigationBarItem(icon: Icon(Icons.post_add), label: "minhas caronas"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "perfil"),
         ],
       ),
