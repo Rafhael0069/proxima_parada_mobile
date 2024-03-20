@@ -1,8 +1,6 @@
-// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signup.dart';
-import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class Signin extends StatefulWidget {
   const Signin({Key? key}) : super(key: key);
@@ -12,26 +10,32 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
-  final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool _passwordVisible = false;
   final bool _loading = false;
 
+  // String _email = 'teste2@gmail.com';
+  // String _password = '123456';
+
+  String _email = '';
+  String _password = '';
+
   @override
   void initState() {
-    _controllerEmail.text = "teste2@gmail.com";
-    _controllerPassword.text = "123456";
     super.initState();
   }
 
-  _login() async {
-    _directToHome();
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      _directToHome();
+    }
   }
 
   _directToHome() {
     // ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()), (Route<dynamic> route) => false);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home()),
+        (Route<dynamic> route) => false);
   }
 
   @override
@@ -57,63 +61,83 @@ class _SigninState extends State<Signin> {
                         width: 150,
                       ),
                     ),
-                    Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: TextField(
-                          keyboardType: TextInputType.emailAddress,
-                          controller: _controllerEmail,
-                          textInputAction: TextInputAction.next,
-                          decoration: const InputDecoration(
-                            labelText: "E-mail",
-                            hintText: "Digite o seu e-mail",
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        child: TextField(
-                          keyboardType: TextInputType.text,
-                          obscureText: !_passwordVisible,
-                          controller: _controllerPassword,
-                          textInputAction: TextInputAction.done,
-                          decoration: InputDecoration(
-                            labelText: "Senha",
-                            hintText: "Digite a sua senha",
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                                color: Theme.of(context).primaryColorDark,
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                              child: TextFormField(
+                                textInputAction: TextInputAction.next,
+                                decoration: const InputDecoration(labelText: 'Email'),
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Por favor, digite seu email';
+                                  }
+                                  // Adicione uma validação de email mais robusta conforme necessário
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _email = value!;
+                                },
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _passwordVisible = !_passwordVisible;
-                                });
-                              },
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 16,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () => _login(),
-                        style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                        child: const Text(
-                          "Entrar",
-                          style: TextStyle(
-                            fontSize: 20,
+                          Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                              child: TextFormField(
+                                keyboardType: TextInputType.text,
+                                obscureText: !_passwordVisible,
+                                decoration: InputDecoration(
+                                  labelText: 'Senha',
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                      color: Theme.of(context).primaryColorDark,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _passwordVisible = !_passwordVisible;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                textInputAction: TextInputAction.next,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Por favor, digite sua senha';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _password = value!;
+                                },
+                              ),
+                            ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: ElevatedButton(
+                              onPressed: _submitForm,
+                              style:
+                                  ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
+                              child: const Text(
+                                'Cadastre-se',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Padding(
