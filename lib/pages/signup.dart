@@ -25,7 +25,7 @@ class _SignupState extends State<Signup> {
 
   bool _passwordVisible = false;
   bool _passwordVisible2 = false;
-  final bool _loading = false;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -37,8 +37,39 @@ class _SignupState extends State<Signup> {
     super.initState();
   }
 
-  _createUser() async {
-    _directToHome();
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Câmera'),
+                onTap: () {
+                  // Ação quando "Câmera" é selecionada
+                  Navigator.pop(context); // Fecha o Bottom Sheet
+                  ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('Galeria'),
+                onTap: () {
+                  // Ação quando "Galeria" é selecionada
+                  Navigator.pop(context); // Fecha o Bottom Sheet
+                  ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   _directToHome() {
@@ -72,8 +103,8 @@ class _SignupState extends State<Signup> {
                         Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: GestureDetector(
-                              onTap: () => ShowAlertDialog.showAlertDialog(
-                                  context, "Ainda não implementado :("),
+                              onTap: () =>  _showBottomSheet(context),
+                              // onTap: () => ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :("),
                               child: _pickedImage == null
                                 ? CircleAvatar(
                               backgroundImage: _imageUserStandard,
@@ -185,7 +216,7 @@ class _SignupState extends State<Signup> {
                           padding: const EdgeInsets.only(top: 16),
                           child: ElevatedButton(
                             //Buttom Signin
-                            onPressed: () => _createUser(),
+                            onPressed: () => _directToHome(),
                             style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                             child: const Text(
                               "Cadastra-se",

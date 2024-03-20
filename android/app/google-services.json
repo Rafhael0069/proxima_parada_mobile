@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "933133262129",
+    "firebase_url": "https://proxima-parada-001-default-rtdb.firebaseio.com",
+    "project_id": "proxima-parada-001",
+    "storage_bucket": "proxima-parada-001.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933133262129:android:79f4ae4c24db35c5dbe410",
+        "android_client_info": {
+          "package_name": "com.rafhael.dev.proxima_parada_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933133262129-sifu6ms44ul3i127pq3pagtr642haqij.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEhSenkh1Oq77nA280FR18QUxZCe3yxN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933133262129-sifu6ms44ul3i127pq3pagtr642haqij.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
