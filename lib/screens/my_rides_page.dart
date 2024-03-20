@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class MyRidesPage extends StatelessWidget {
   const MyRidesPage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class MyRidesPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        onPressed: ()=>{},
+        onPressed: ()=> ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :("),
         child: const Icon(Icons.add),
       ),
     );

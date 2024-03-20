@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/screens/feed_page.dart';
 import 'package:proxima_parada_mobile/screens/my_rides_page.dart';
 import 'package:proxima_parada_mobile/screens/profile_page.dart';
+import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -36,7 +37,33 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Próxima Parada"),
-        actions: [IconButton(onPressed: () => {}, icon: Icon(Icons.menu))],
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'settings') {
+                ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+              } else if (value == 'logout') {
+                ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Configurações'),
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'logout',
+                child: ListTile(
+                  leading: Icon(Icons.exit_to_app),
+                  title: Text('Sair'),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Center(
         child: _screens.elementAt(_selectedIndex),
