@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/pages/welcome.dart';
 import 'package:proxima_parada_mobile/screens/feed_page.dart';
@@ -44,6 +45,8 @@ class _HomeState extends State<Home> {
               if (value == 'settings') {
                 ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
               } else if (value == 'logout') {
+                FirebaseAuth auth = FirebaseAuth.instance;
+                auth.signOut();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const Welcome()),

@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_helper.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signup.dart';
+import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
 
 class Signin extends StatefulWidget {
@@ -12,24 +15,53 @@ class Signin extends StatefulWidget {
 
 class _SigninState extends State<Signin> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
 
   bool _passwordVisible = false;
-  final bool _loading = false;
-
-  // String _email = 'teste2@gmail.com';
-  // String _password = '123456';
-
-  String _email = '';
-  String _password = '';
+  bool _loading = false;
 
   @override
   void initState() {
+    _controllerEmail.text = "teste1@gmail.com";
+    _controllerPassword.text = "1234abcd";
     super.initState();
+  }
+
+  _login() async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _controllerEmail.text, password: _controllerPassword.text);
+      setState(() {
+        _loading = false;
+      });
+      _directToHome();
+    } on FirebaseAuthException catch (error) {
+      setState(() {
+        _loading = false;
+      });
+      if (error.code == 'invalid-email') {
+        ShowAlertDialog.showAlertDialog(context, "E-mail inválido!");
+      } else if (error.code == 'user-not-found') {
+        ShowAlertDialog.showAlertDialog(
+            context, "Não há registro de usuário existente correspondente ao e-mail fornecido.");
+      } else if (error.code == 'wrong-password') {
+        ShowAlertDialog.showAlertDialog(context, "Senha incorreta.");
+      } else {
+        ShowAlertDialog.showAlertDialog(context,
+            "Ocorreu um erro ao acesser nossos servidores. por favor tente novamente mais tarde.");
+      }
+      _controllerEmail.text = "";
+      _controllerPassword.text = "";
+    }
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      _directToHome();
+      _login();
     }
   }
 
@@ -77,13 +109,11 @@ class _SigninState extends State<Signin> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 6),
                                 child: TextFormField(
+                                  controller: _controllerEmail,
                                   textInputAction: TextInputAction.next,
                                   decoration: const InputDecoration(labelText: 'Email'),
                                   keyboardType: TextInputType.emailAddress,
                                   validator: Validator.email,
-                                  onSaved: (value) {
-                                    _email = value!;
-                                  },
                                 ),
                               ),
                             ),
@@ -93,6 +123,7 @@ class _SigninState extends State<Signin> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 6),
                                 child: TextFormField(
+                                  controller: _controllerPassword,
                                   keyboardType: TextInputType.text,
                                   obscureText: !_passwordVisible,
                                   decoration: InputDecoration(
@@ -111,9 +142,6 @@ class _SigninState extends State<Signin> {
                                   ),
                                   textInputAction: TextInputAction.done,
                                   validator: Validator.password,
-                                  onSaved: (value) {
-                                    _password = value!;
-                                  },
                                 ),
                               ),
                             ),
