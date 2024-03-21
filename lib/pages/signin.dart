@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signup.dart';
+import 'package:proxima_parada_mobile/utils/validator.dart';
 
 class Signin extends StatefulWidget {
   const Signin({Key? key}) : super(key: key);
@@ -40,129 +41,123 @@ class _SigninState extends State<Signin> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     return WillPopScope(
       onWillPop: () async {
         return true;
       },
       child: Scaffold(
-        body: Container(
-          padding: const EdgeInsets.all(16),
-          child: _loading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 62),
-                      child: Image(
-                        image: AssetImage("assets/images/logo.png"),
-                        width: 150,
+        body: SingleChildScrollView(
+          child: Container(
+            height: mediaQuery.size.height,
+            padding: const EdgeInsets.all(16),
+            child: _loading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 62),
+                        child: Image(
+                          image: AssetImage("assets/images/logo.png"),
+                          width: 150,
+                        ),
                       ),
-                    ),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Container(
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6),
-                              child: TextFormField(
-                                textInputAction: TextInputAction.next,
-                                decoration: const InputDecoration(labelText: 'Email'),
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Por favor, digite seu email';
-                                  }
-                                  // Adicione uma validação de email mais robusta conforme necessário
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  _email = value!;
-                                },
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Container(
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                                child: TextFormField(
+                                  textInputAction: TextInputAction.next,
+                                  decoration: const InputDecoration(labelText: 'Email'),
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: Validator.email,
+                                  onSaved: (value) {
+                                    _email = value!;
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6),
-                              child: TextFormField(
-                                keyboardType: TextInputType.text,
-                                obscureText: !_passwordVisible,
-                                decoration: InputDecoration(
-                                  labelText: 'Senha',
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                                      color: Theme.of(context).primaryColorDark,
+                            Container(
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                                child: TextFormField(
+                                  keyboardType: TextInputType.text,
+                                  obscureText: !_passwordVisible,
+                                  decoration: InputDecoration(
+                                    labelText: 'Senha',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                        color: Theme.of(context).primaryColorDark,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _passwordVisible = !_passwordVisible;
+                                        });
+                                      },
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _passwordVisible = !_passwordVisible;
-                                      });
-                                    },
+                                  ),
+                                  textInputAction: TextInputAction.done,
+                                  validator: Validator.password,
+                                  onSaved: (value) {
+                                    _password = value!;
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: ElevatedButton(
+                                onPressed: _submitForm,
+                                style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size.fromHeight(45)),
+                                child: const Text(
+                                  'Cadastre-se',
+                                  style: TextStyle(
+                                    fontSize: 20,
                                   ),
                                 ),
-                                textInputAction: TextInputAction.next,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Por favor, digite sua senha';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  _password = value!;
-                                },
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: ElevatedButton(
-                              onPressed: _submitForm,
-                              style:
-                                  ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                              child: const Text(
-                                'Cadastre-se',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4, top: 16, right: 4),
-                      child: GestureDetector(
-                        onTap: () => Navigator.pushReplacement(
-                            context, MaterialPageRoute(builder: (context) => const Signup())),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Ainda não possui uma conta? ",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              "Cadaste-se",
-                              style: TextStyle(
-                                  fontSize: 18, fontStyle: FontStyle.italic, color: Colors.blue),
-                            )
                           ],
                         ),
                       ),
-                    )
-                  ],
-                ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4, top: 16, right: 4),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pushReplacement(
+                              context, MaterialPageRoute(builder: (context) => const Signup())),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Ainda não possui uma conta? ",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Text(
+                                "Cadaste-se",
+                                style: TextStyle(
+                                    fontSize: 18, fontStyle: FontStyle.italic, color: Colors.blue),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+          ),
         ),
       ),
     );

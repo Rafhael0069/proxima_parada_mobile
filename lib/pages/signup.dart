@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
+import 'package:proxima_parada_mobile/utils/validator.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -141,39 +142,34 @@ class _SignupState extends State<Signup> {
                                   child: TextFormField(
                                     textInputAction: TextInputAction.next,
                                     decoration: const InputDecoration(labelText: 'Nome'),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, digite seu nome';
-                                      }
-                                      return null;
-                                    },
+                                    validator: Validator.nome,
                                     onSaved: (value) {
                                       _name = value!;
                                     },
                                   ),
                                 ),
                               ),
-                              Container(
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                                  child: TextFormField(
-                                    textInputAction: TextInputAction.next,
-                                    decoration: const InputDecoration(labelText: 'Idade'),
-                                    keyboardType: TextInputType.number,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, digite sua idade';
-                                      }
-                                      return null;
-                                    },
-                                    onSaved: (value) {
-                                      _age = int.parse(value!);
-                                    },
-                                  ),
-                                ),
-                              ),
+                              // Container(
+                              //   clipBehavior: Clip.antiAlias,
+                              //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.symmetric(horizontal: 6),
+                              //     child: TextFormField(
+                              //       textInputAction: TextInputAction.next,
+                              //       decoration: const InputDecoration(labelText: 'Idade'),
+                              //       keyboardType: TextInputType.datetime,
+                              //       validator: (value) {
+                              //         if (value == null || value.isEmpty) {
+                              //           return 'Por favor, digite sua idade';
+                              //         }
+                              //         return null;
+                              //       },
+                              //       onSaved: (value) {
+                              //         _age = int.parse(value!);
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
                               Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -183,13 +179,7 @@ class _SignupState extends State<Signup> {
                                     textInputAction: TextInputAction.next,
                                     decoration: const InputDecoration(labelText: 'Email'),
                                     keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, digite seu email';
-                                      }
-                                      // Adicione uma validação de email mais robusta conforme necessário
-                                      return null;
-                                    },
+                                    validator: Validator.email,
                                     onSaved: (value) {
                                       _email = value!;
                                     },
@@ -222,12 +212,7 @@ class _SignupState extends State<Signup> {
                                       ),
                                     ),
                                     textInputAction: TextInputAction.next,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, digite sua senha';
-                                      }
-                                      return null;
-                                    },
+                                    validator: Validator.password,
                                     onSaved: (value) {
                                       _password = value!;
                                     },
@@ -258,15 +243,8 @@ class _SignupState extends State<Signup> {
                                           },
                                         )),
                                     textInputAction: TextInputAction.done,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Por favor, confirme sua senha';
-                                      }
-                                      if (value != _controllerPassword.text) {
-                                        return 'As senhas não coincidem';
-                                      }
-                                      return null;
-                                    },
+                                    validator: (value) =>
+                                        Validator.confirmPassword(value, _controllerPassword.text),
                                     onSaved: (value) {
                                       _confirmPassword = value!;
                                     },
