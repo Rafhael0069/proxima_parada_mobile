@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_helper.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signup.dart';
-import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
 
 class Signin extends StatefulWidget {
@@ -17,7 +15,7 @@ class _SigninState extends State<Signin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-
+  final FirebaseServices _fbServices = FirebaseServices();
   bool _passwordVisible = false;
   bool _loading = false;
 
@@ -28,40 +26,19 @@ class _SigninState extends State<Signin> {
     super.initState();
   }
 
-  _login() async {
-    setState(() {
-      _loading = true;
-    });
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _controllerEmail.text, password: _controllerPassword.text);
-      setState(() {
-        _loading = false;
-      });
-      _directToHome();
-    } on FirebaseAuthException catch (error) {
-      setState(() {
-        _loading = false;
-      });
-      if (error.code == 'invalid-email') {
-        ShowAlertDialog.showAlertDialog(context, "E-mail inválido!");
-      } else if (error.code == 'user-not-found') {
-        ShowAlertDialog.showAlertDialog(
-            context, "Não há registro de usuário existente correspondente ao e-mail fornecido.");
-      } else if (error.code == 'wrong-password') {
-        ShowAlertDialog.showAlertDialog(context, "Senha incorreta.");
-      } else {
-        ShowAlertDialog.showAlertDialog(context,
-            "Ocorreu um erro ao acesser nossos servidores. por favor tente novamente mais tarde.");
-      }
-      _controllerEmail.text = "";
-      _controllerPassword.text = "";
-    }
-  }
-
-  void _submitForm() {
+  _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      _login();
+      setState(() => _loading = true);
+      final user = await _fbServices.signInWithEmailAndPassword(
+          _controllerEmail.text, _controllerPassword.text, context);
+      if (user != null) {
+        _directToHome();
+        setState(() => _loading = false);
+      } else {
+        setState(() => _loading = false);
+        // ShowAlertDialog.showAlertDialog(context, 'Falha no login, verifique suas credenciais');
+      }
+      // _login();
     }
   }
 

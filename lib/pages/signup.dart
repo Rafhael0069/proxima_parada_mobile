@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_helper.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
