@@ -1,5 +1,9 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_helper.dart';
+import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
@@ -17,17 +21,11 @@ class _SignupState extends State<Signup> {
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerPassword2 = TextEditingController();
   final TextEditingController _controllerName = TextEditingController();
-  final TextEditingController _controllerOccupation = TextEditingController();
   final _imageUserStandard = const AssetImage('assets/images/user_avatar.png');
 
   final _pickedImage = null;
-
-  String _name = '';
-  int _age = 0;
-  String _email = '';
-  String _password = '';
-  String _confirmPassword = '';
 
   bool _passwordVisible = false;
   bool _passwordVisible2 = false;
@@ -35,11 +33,10 @@ class _SignupState extends State<Signup> {
 
   @override
   void initState() {
-    _controllerEmail.text = "teste3@gmail.com";
-    // _controllerPassword.text = "123456";
-    // _controllerPassword2.text = "123456";
-    _controllerName.text = "nome 3 teste";
-    _controllerOccupation.text = "ocupação 3 teste";
+    _controllerName.text = "nome 1 teste";
+    _controllerEmail.text = "teste1@gmail.com";
+    _controllerPassword.text = "1234abcd";
+    _controllerPassword2.text = "1234abcd";
     super.initState();
   }
 
@@ -79,9 +76,56 @@ class _SignupState extends State<Signup> {
   }
 
   void _submitForm() {
+    print("teste: Chegou no metodo submit");
     if (_formKey.currentState!.validate()) {
-      _directToHome();
+      setState(() {
+        _loading = true;
+      });
+      LocalUser user = LocalUser(_controllerName.text, _controllerEmail.text);
+      _createUserLocal(user, _controllerPassword.text);
     }
+  }
+
+  _createUserLocal(LocalUser localUser, String password) async {
+    print("teste: Chegou no metodo create user");
+    try {
+      final auth = FirebaseAuth.instance;
+      final user = await auth.createUserWithEmailAndPassword(email: localUser.email!, password: password);
+      print("teste: Usuario criado com sucesso");
+      localUser.idUser = user.user!.uid;
+      _saveUserData(localUser);
+    } on FirebaseAuthException catch (error) {
+      setState(() {
+        _loading = false;
+      });
+      if (error.code == 'invalid-email') {
+        ShowAlertDialog.showAlertDialog(context, "E-mail inválido.");
+      } else if (error.code == 'email-already-in-use') {
+        ShowAlertDialog.showAlertDialog(context, "Esse e-mail já está em uso por outro usiário.");
+      } else if (error.code == 'weak-password') {
+        ShowAlertDialog.showAlertDialog(
+            context, "Sua senha é muito fraca. digite uma senha mais forte.");
+      } else {
+        ShowAlertDialog.showAlertDialog(context,
+            "Ocorreu um erro ao acesser nossos servidores. por favor tente novamente mais tarde");
+      }
+    }
+  }
+
+  _saveUserData(LocalUser localUser) async {
+    print("teste: Chegou no metodo save user");
+    await FirebaseFirestore.instance.collection("users").add(localUser.toMap()).then((value) {
+      setState(() {
+        _loading = false;
+      });
+      _directToHome();
+    }).catchError((error) {
+      print("teste: erro: " + error);
+      ShowAlertDialog.showAlertDialog(context, error);
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 
   void _directToHome() {
@@ -112,7 +156,6 @@ class _SignupState extends State<Signup> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Image(image: _imageUser),
                         Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: GestureDetector(
@@ -140,49 +183,24 @@ class _SignupState extends State<Signup> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
+                                    controller: _controllerName,
                                     textInputAction: TextInputAction.next,
                                     decoration: const InputDecoration(labelText: 'Nome'),
                                     validator: Validator.nome,
-                                    onSaved: (value) {
-                                      _name = value!;
-                                    },
                                   ),
                                 ),
                               ),
-                              // Container(
-                              //   clipBehavior: Clip.antiAlias,
-                              //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.symmetric(horizontal: 6),
-                              //     child: TextFormField(
-                              //       textInputAction: TextInputAction.next,
-                              //       decoration: const InputDecoration(labelText: 'Idade'),
-                              //       keyboardType: TextInputType.datetime,
-                              //       validator: (value) {
-                              //         if (value == null || value.isEmpty) {
-                              //           return 'Por favor, digite sua idade';
-                              //         }
-                              //         return null;
-                              //       },
-                              //       onSaved: (value) {
-                              //         _age = int.parse(value!);
-                              //       },
-                              //     ),
-                              //   ),
-                              // ),
                               Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
+                                    controller: _controllerEmail,
                                     textInputAction: TextInputAction.next,
                                     decoration: const InputDecoration(labelText: 'Email'),
                                     keyboardType: TextInputType.emailAddress,
                                     validator: Validator.email,
-                                    onSaved: (value) {
-                                      _email = value!;
-                                    },
                                   ),
                                 ),
                               ),
@@ -213,9 +231,6 @@ class _SignupState extends State<Signup> {
                                     ),
                                     textInputAction: TextInputAction.next,
                                     validator: Validator.password,
-                                    onSaved: (value) {
-                                      _password = value!;
-                                    },
                                   ),
                                 ),
                               ),
@@ -225,6 +240,7 @@ class _SignupState extends State<Signup> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
+                                    controller: _controllerPassword2,
                                     keyboardType: TextInputType.text,
                                     obscureText: !_passwordVisible2,
                                     decoration: InputDecoration(
@@ -245,9 +261,6 @@ class _SignupState extends State<Signup> {
                                     textInputAction: TextInputAction.done,
                                     validator: (value) =>
                                         Validator.confirmPassword(value, _controllerPassword.text),
-                                    onSaved: (value) {
-                                      _confirmPassword = value!;
-                                    },
                                   ),
                                 ),
                               ),
