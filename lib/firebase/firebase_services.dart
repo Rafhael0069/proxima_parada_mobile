@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,11 +9,11 @@ import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 class FirebaseServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _dbInstance = FirebaseFirestore.instance;
+  final Reference _storageRef = FirebaseStorage.instance.ref();
 
   static get currentUser async => FirebaseAuth.instance.currentUser;
 
-
-  static get storageRef async => FirebaseStorage.instance.ref();
+  // static get storageRef async => FirebaseStorage.instance.ref();
 
   Future<User?> signInWithEmailAndPassword(String email, String password, context) async {
     try {
@@ -62,6 +64,26 @@ class FirebaseServices {
       await _dbInstance.collection('users').doc(localUser.idUser).set(localUser.toMap());
     } catch (e) {
       ShowAlertDialog.showAlertDialog(context, "Erro: $e");
+    }
+  }
+
+  Future<String?> uploadImage(LocalUser localUser, String pickedImage) async {
+    try {
+      String fileName = '${localUser.idUser}.jpg';
+      SettableMetadata metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+      );
+      Reference fileRef = _storageRef.child("images/users/$fileName");
+      UploadTask uploadTask = fileRef.putFile(File(pickedImage), metadata);
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      if (taskSnapshot.state == TaskState.success) {
+        final url = await taskSnapshot.ref.getDownloadURL();
+        return url;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   }
 }

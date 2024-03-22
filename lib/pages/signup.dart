@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
-import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
 
 class Signup extends StatefulWidget {
@@ -24,7 +24,8 @@ class _SignupState extends State<Signup> {
   final FirebaseServices _fbServices = FirebaseServices();
   final _imageUserStandard = const AssetImage('assets/images/user_avatar.png');
 
-  final _pickedImage = null;
+  final ImagePicker _picker = ImagePicker();
+  XFile? _pickedImage;
 
   bool _passwordVisible = false;
   bool _passwordVisible2 = false;
@@ -53,18 +54,16 @@ class _SignupState extends State<Signup> {
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Câmera'),
                 onTap: () {
-                  // Ação quando "Câmera" é selecionada
-                  Navigator.pop(context); // Fecha o Bottom Sheet
-                  ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+                  _selectImage(true);
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo),
                 title: const Text('Galeria'),
                 onTap: () {
-                  // Ação quando "Galeria" é selecionada
-                  Navigator.pop(context); // Fecha o Bottom Sheet
-                  ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+                  _selectImage(false);
+                  Navigator.pop(context);
                 },
               ),
             ],
@@ -74,6 +73,18 @@ class _SignupState extends State<Signup> {
     );
   }
 
+  Future _selectImage(bool camera) async {
+    XFile? imagemSelecionada;
+    if (camera) {
+      imagemSelecionada = await _picker.pickImage(source: ImageSource.camera);
+    } else {
+      imagemSelecionada = await _picker.pickImage(source: ImageSource.gallery);
+    }
+    setState(() {
+      _pickedImage = imagemSelecionada;
+    });
+  }
+
   _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
@@ -81,9 +92,17 @@ class _SignupState extends State<Signup> {
       final user = await _fbServices.createUserWithEmailAndPassword(
           localUser, _controllerPassword.text, context);
       if (user != null) {
-        await _fbServices.saveUserData(localUser, context);
-        _directToHome();
-        setState(() => _loading = false);
+        if (_pickedImage != null) {
+          final urlImage = await _fbServices.uploadImage(localUser, _pickedImage!.path);
+          localUser.locationImage = urlImage.toString();
+          await _fbServices.saveUserData(localUser, context);
+          _directToHome();
+          setState(() => _loading = false);
+        } else {
+          await _fbServices.saveUserData(localUser, context);
+          _directToHome();
+          setState(() => _loading = false);
+        }
       } else {
         setState(() => _loading = false);
       }
