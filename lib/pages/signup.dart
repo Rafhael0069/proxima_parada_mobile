@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
@@ -23,6 +21,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPassword2 = TextEditingController();
   final TextEditingController _controllerName = TextEditingController();
+  final FirebaseServices _fbServices = FirebaseServices();
   final _imageUserStandard = const AssetImage('assets/images/user_avatar.png');
 
   final _pickedImage = null;
@@ -75,57 +74,20 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  void _submitForm() {
-    print("teste: Chegou no metodo submit");
+  _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _loading = true;
-      });
-      LocalUser user = LocalUser(_controllerName.text, _controllerEmail.text);
-      _createUserLocal(user, _controllerPassword.text);
-    }
-  }
-
-  _createUserLocal(LocalUser localUser, String password) async {
-    print("teste: Chegou no metodo create user");
-    try {
-      final auth = FirebaseAuth.instance;
-      final user = await auth.createUserWithEmailAndPassword(email: localUser.email!, password: password);
-      print("teste: Usuario criado com sucesso");
-      localUser.idUser = user.user!.uid;
-      _saveUserData(localUser);
-    } on FirebaseAuthException catch (error) {
-      setState(() {
-        _loading = false;
-      });
-      if (error.code == 'invalid-email') {
-        ShowAlertDialog.showAlertDialog(context, "E-mail inválido.");
-      } else if (error.code == 'email-already-in-use') {
-        ShowAlertDialog.showAlertDialog(context, "Esse e-mail já está em uso por outro usiário.");
-      } else if (error.code == 'weak-password') {
-        ShowAlertDialog.showAlertDialog(
-            context, "Sua senha é muito fraca. digite uma senha mais forte.");
+      setState(() => _loading = true);
+      LocalUser localUser = LocalUser(_controllerName.text, _controllerEmail.text);
+      final user = await _fbServices.createUserWithEmailAndPassword(
+          localUser, _controllerPassword.text, context);
+      if (user != null) {
+        await _fbServices.saveUserData(localUser, context);
+        _directToHome();
+        setState(() => _loading = false);
       } else {
-        ShowAlertDialog.showAlertDialog(context,
-            "Ocorreu um erro ao acesser nossos servidores. por favor tente novamente mais tarde");
+        setState(() => _loading = false);
       }
     }
-  }
-
-  _saveUserData(LocalUser localUser) async {
-    print("teste: Chegou no metodo save user");
-    await FirebaseFirestore.instance.collection("users").add(localUser.toMap()).then((value) {
-      setState(() {
-        _loading = false;
-      });
-      _directToHome();
-    }).catchError((error) {
-      print("teste: erro: " + error);
-      ShowAlertDialog.showAlertDialog(context, error);
-      setState(() {
-        _loading = false;
-      });
-    });
   }
 
   void _directToHome() {
@@ -267,7 +229,7 @@ class _SignupState extends State<Signup> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: ElevatedButton(
-                                  onPressed: _submitForm,
+                                  onPressed: () => _submitForm(context),
                                   style: ElevatedButton.styleFrom(
                                       minimumSize: const Size.fromHeight(45)),
                                   child: const Text(
