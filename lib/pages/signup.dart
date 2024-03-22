@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
@@ -21,7 +21,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPassword2 = TextEditingController();
   final TextEditingController _controllerName = TextEditingController();
-  final FirebaseServices _fbServices = FirebaseServices();
+  final FirebaseService _fbServices = FirebaseService();
   final _imageUserStandard = const AssetImage('assets/images/user_avatar.png');
 
   final ImagePicker _picker = ImagePicker();

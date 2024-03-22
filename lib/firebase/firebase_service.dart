@@ -3,17 +3,20 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
-class FirebaseServices {
+class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _dbInstance = FirebaseFirestore.instance;
   final Reference _storageRef = FirebaseStorage.instance.ref();
 
   static get currentUser async => FirebaseAuth.instance.currentUser;
 
-  // static get storageRef async => FirebaseStorage.instance.ref();
+  getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
 
   Future<User?> signInWithEmailAndPassword(String email, String password, context) async {
     try {
@@ -83,6 +86,27 @@ class FirebaseServices {
         return null;
       }
     } catch (e) {
+      return null;
+    }
+  }
+
+  // Future getUserData() async {
+  //   final user = currentUser;
+  //   final snapshot = await _dbInstance.doc('users/${user!.uid}').get();
+  //   if (snapshot.exists){
+  //     LocalUser localUser = LocalUser.fromMap(snapshot.data() as QueryDocumentSnapshot<Object?>);
+  //     print("dados: "+ localUser.toString());
+  //   }
+  //
+  // }
+
+  Future<DocumentSnapshot?> getUserData(String userId, BuildContext context) async {
+    try {
+      DocumentSnapshot documentSnapshot =
+      await _dbInstance.collection('users').doc(userId).get();
+      return documentSnapshot;
+    } catch (e) {
+      ShowAlertDialog.showAlertDialog(context, 'Erro ao obter os dados do usuário: $e');
       return null;
     }
   }

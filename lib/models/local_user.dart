@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class LocalUser {
   String? idUser;
   String? name;
@@ -8,7 +6,7 @@ class LocalUser {
 
   LocalUser(this.name, this.email, [this.idUser, this.locationImage]);
 
-  LocalUser.fromMap(QueryDocumentSnapshot doc) {
+  LocalUser.fromMap(Map<String, dynamic> doc) {
     idUser = doc["idUser"];
     name = doc["name"];
     locationImage = doc["locationImage"];

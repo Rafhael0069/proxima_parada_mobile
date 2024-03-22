@@ -15,17 +15,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  bool _isRideVisible = true;
+  final bool _isRideVisible = true;
 
-  late List<Widget> _screens = _isRideVisible
+  // final FirebaseService _fbServices = FirebaseService();
+
+  var currentUser =  FirebaseAuth.instance.currentUser;
+  // var currentUser =  _fbServices.getCurrentUser();
+
+  late final List<Widget> _screens = _isRideVisible
       ? <Widget>[
           FeedPage(),
-          MyRidesPage(),
-          ProfilePage(),
+          const MyRidesPage(),
+          ProfilePage(
+            userId: currentUser!.uid,
+          ),
         ]
       : <Widget>[
           FeedPage(),
-          ProfilePage(),
+          ProfilePage(
+            userId: currentUser!.uid,
+          ),
         ];
 
   void _onItemTapped(int index) {
@@ -38,7 +47,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Próxima Parada"),
+        title: const Text("Próxima Parada"),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -54,14 +63,14 @@ class _HomeState extends State<Home> {
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'settings',
                 child: ListTile(
                   leading: Icon(Icons.settings),
                   title: Text('Configurações'),
                 ),
               ),
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'logout',
                 child: ListTile(
                   leading: Icon(Icons.exit_to_app),
@@ -79,10 +88,10 @@ class _HomeState extends State<Home> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.feed), label: "feed"),
+          const BottomNavigationBarItem(icon: Icon(Icons.feed), label: "feed"),
           if (_isRideVisible)
-            BottomNavigationBarItem(icon: Icon(Icons.post_add), label: "minhas caronas"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "perfil"),
+            const BottomNavigationBarItem(icon: Icon(Icons.post_add), label: "minhas caronas"),
+          const BottomNavigationBarItem(icon: Icon(Icons.person), label: "perfil"),
         ],
       ),
     );

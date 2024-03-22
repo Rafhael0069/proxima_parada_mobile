@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/welcome.dart';
 
@@ -18,7 +18,7 @@ Future<void> main() async {
     ),
   );
 
-  final currentUser = await FirebaseServices.currentUser;
+  final currentUser = await FirebaseService().getCurrentUser();
 
   runApp(MaterialApp(
     home: currentUser != null ?  Home() :  Welcome(),

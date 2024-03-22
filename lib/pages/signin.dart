@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_services.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signup.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
@@ -15,7 +15,7 @@ class _SigninState extends State<Signin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final FirebaseServices _fbServices = FirebaseServices();
+  final FirebaseService _fbServices = FirebaseService();
   bool _passwordVisible = false;
   bool _loading = false;
 
