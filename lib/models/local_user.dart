@@ -6,6 +6,8 @@ class LocalUser {
 
   LocalUser(this.name, this.email, [this.idUser, this.locationImage]);
 
+  LocalUser.empty();
+
   LocalUser.fromMap(Map<String, dynamic> doc) {
     idUser = doc["idUser"];
     name = doc["name"];

@@ -17,10 +17,10 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerPassword2 = TextEditingController();
-  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController2 = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final FirebaseService _fbServices = FirebaseService();
   final _imageUserStandard = const AssetImage('assets/images/user_avatar.png');
 
@@ -33,10 +33,10 @@ class _SignupState extends State<Signup> {
 
   @override
   void initState() {
-    _controllerName.text = "nome 1 teste";
-    _controllerEmail.text = "teste1@gmail.com";
-    _controllerPassword.text = "1234abcd";
-    _controllerPassword2.text = "1234abcd";
+    _nameController.text = "nome 1 teste";
+    _emailController.text = "teste1@gmail.com";
+    _passwordController.text = "1234abcd";
+    _passwordController2.text = "1234abcd";
     super.initState();
   }
 
@@ -88,9 +88,9 @@ class _SignupState extends State<Signup> {
   _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
-      LocalUser localUser = LocalUser(_controllerName.text, _controllerEmail.text);
+      LocalUser localUser = LocalUser(_nameController.text, _emailController.text);
       final user = await _fbServices.createUserWithEmailAndPassword(
-          localUser, _controllerPassword.text, context);
+          localUser, _passwordController.text, context);
       if (user != null) {
         if (_pickedImage != null) {
           final urlImage = await _fbServices.uploadImage(localUser, _pickedImage!.path);
@@ -164,7 +164,7 @@ class _SignupState extends State<Signup> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
-                                    controller: _controllerName,
+                                    controller: _nameController,
                                     textInputAction: TextInputAction.next,
                                     decoration: const InputDecoration(labelText: 'Nome'),
                                     validator: Validator.nome,
@@ -177,7 +177,7 @@ class _SignupState extends State<Signup> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
-                                    controller: _controllerEmail,
+                                    controller: _emailController,
                                     textInputAction: TextInputAction.next,
                                     decoration: const InputDecoration(labelText: 'Email'),
                                     keyboardType: TextInputType.emailAddress,
@@ -192,7 +192,7 @@ class _SignupState extends State<Signup> {
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
                                     keyboardType: TextInputType.text,
-                                    controller: _controllerPassword,
+                                    controller: _passwordController,
                                     obscureText: !_passwordVisible,
                                     decoration: InputDecoration(
                                       labelText: 'Senha',
@@ -221,7 +221,7 @@ class _SignupState extends State<Signup> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: TextFormField(
-                                    controller: _controllerPassword2,
+                                    controller: _passwordController2,
                                     keyboardType: TextInputType.text,
                                     obscureText: !_passwordVisible2,
                                     decoration: InputDecoration(
@@ -241,7 +241,7 @@ class _SignupState extends State<Signup> {
                                         )),
                                     textInputAction: TextInputAction.done,
                                     validator: (value) =>
-                                        Validator.confirmPassword(value, _controllerPassword.text),
+                                        Validator.confirmPassword(value, _passwordController.text),
                                   ),
                                 ),
                               ),

@@ -12,8 +12,6 @@ class FirebaseService {
   final FirebaseFirestore _dbInstance = FirebaseFirestore.instance;
   final Reference _storageRef = FirebaseStorage.instance.ref();
 
-  static get currentUser async => FirebaseAuth.instance.currentUser;
-
   getCurrentUser() {
     return FirebaseAuth.instance.currentUser;
   }
@@ -62,7 +60,7 @@ class FirebaseService {
     }
   }
 
-  Future<void> saveUserData(LocalUser localUser, context) async {
+  Future<void> saveUserData(LocalUser localUser,BuildContext context) async {
     try {
       await _dbInstance.collection('users').doc(localUser.idUser).set(localUser.toMap());
     } catch (e) {
@@ -90,16 +88,6 @@ class FirebaseService {
     }
   }
 
-  // Future getUserData() async {
-  //   final user = currentUser;
-  //   final snapshot = await _dbInstance.doc('users/${user!.uid}').get();
-  //   if (snapshot.exists){
-  //     LocalUser localUser = LocalUser.fromMap(snapshot.data() as QueryDocumentSnapshot<Object?>);
-  //     print("dados: "+ localUser.toString());
-  //   }
-  //
-  // }
-
   Future<DocumentSnapshot?> getUserData(String userId, BuildContext context) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -108,6 +96,14 @@ class FirebaseService {
     } catch (e) {
       ShowAlertDialog.showAlertDialog(context, 'Erro ao obter os dados do usuário: $e');
       return null;
+    }
+  }
+
+  Future<void> updateUserData(String userId, LocalUser localUser,BuildContext context) async {
+    try {
+      await _dbInstance.collection('users').doc(userId).update(localUser.toMap());
+    } catch (e) {
+      ShowAlertDialog.showAlertDialog(context, 'Erro ao atualizar os dados do usuário: $e');
     }
   }
 }
