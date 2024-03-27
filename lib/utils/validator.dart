@@ -1,12 +1,27 @@
 class Validator {
-
-  static String? nome(String? nome) {
-    if (nome == null || nome.isEmpty) {
+  static String? name(String? name) {
+    if (name == null || name.isEmpty) {
       return 'Por favor, digite seu nome';
     }
-    if (!nome.contains(" ") || nome.length < 8) {
+    if (!name.contains(" ") || name.length < 8) {
       return 'Por favor, digite um nome e sobrenome';
     }
+    return null;
+  }
+
+  static String? phone(String? phone) {
+    RegExp regExp =
+        RegExp(r'(^(?:\+|00)?\d{1,3}\s?)?(?:\(?\d{2,3}\)?[\s.-]?)?\d{4,5}[\s.-]?\d{4}$');
+
+    if (phone == null || phone.isEmpty) {
+      print("validator: testando vasil");
+      return 'Por favor, digite seu número de telefone';
+    }
+
+    if (!regExp.hasMatch(phone)) {
+      return 'Por favor, digite um número de telefone valido';
+    }
+
     return null;
   }
 
@@ -37,14 +52,13 @@ class Validator {
     if (password == null || password.isEmpty) {
       return 'Por favor, digite sua senha';
     }
-    if(!regex.hasMatch(password)){
+    if (!regex.hasMatch(password)) {
       return 'sua senha deve conter letras, numeros e minimo 8 caracteres';
     }
     return null;
   }
 
   static String? confirmPassword(String? password1, String? password2) {
-
     if (password1 == null || password1.isEmpty) {
       return 'Por favor, digite sua senha';
     }
@@ -52,6 +66,5 @@ class Validator {
       return 'As senhas não coincidem';
     }
     return null;
-
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
@@ -20,6 +21,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final FirebaseService _fbServices = FirebaseService();
   String _imageUserStandard =
@@ -28,6 +30,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
   bool _loading = false;
+  var _phoneMask = MaskTextInputFormatter(
+      mask: '(##) # ####-####', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
 
   LocalUser localUser = LocalUser.empty();
 
@@ -90,6 +94,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
         setState(() {
           _nameController.text = localUser.name!;
+          _phoneController.text = localUser.phone!;
           _emailController.text = localUser.email!;
           if (localUser.locationImage != null) {
             print('ImageUser: ${localUser.locationImage!}');
@@ -122,6 +127,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _saveChanges() async {
     try {
       localUser.name = _nameController.text.trim();
+      localUser.phone = _phoneMask.getUnmaskedText();
       localUser.email = _emailController.text.trim();
 
       await _fbServices.updateUserData(widget.userId, localUser, context);
@@ -188,7 +194,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               controller: _nameController,
                               textInputAction: TextInputAction.next,
                               decoration: const InputDecoration(labelText: 'Nome'),
-                              validator: Validator.nome,
+                              validator: Validator.name,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: TextFormField(
+                              controller: _phoneController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [_phoneMask],
+                              decoration: const InputDecoration(labelText: 'Telefone'),
+                              validator: Validator.phone,
                             ),
                           ),
                         ),

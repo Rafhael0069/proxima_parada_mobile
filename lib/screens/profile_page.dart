@@ -35,41 +35,119 @@ class ProfilePage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  userData.locationImage != null
-                      ? CircleAvatar(
-                    radius: 100,
-                    backgroundImage: NetworkImage(userData.locationImage!),
-                    backgroundColor: Colors.white,
-                  )
-                      : const CircleAvatar(
-                    radius: 100,
-                    backgroundImage: AssetImage('assets/images/user_avatar.png'),
-                    backgroundColor: Colors.white,
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 50),
+                        child: userData.locationImage != null
+                            ? CircleAvatar(
+                                radius: 100,
+                                backgroundImage: NetworkImage(userData.locationImage!),
+                                backgroundColor: Colors.white,
+                              )
+                            : const CircleAvatar(
+                                radius: 100,
+                                backgroundImage: AssetImage('assets/images/user_avatar.png'),
+                                backgroundColor: Colors.white,
+                              ),
+                      ),
+                      Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Icon(
+                              Icons.perm_identity_outlined,
+                              size: 50,
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Nome",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              Text(
+                                userData.name!,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Icon(
+                              Icons.phone_outlined,
+                              size: 50,
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Telefone",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              Text(
+                                userData.phone!,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Icon(
+                              Icons.email_outlined,
+                              size: 50,
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Email",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              Text(
+                                userData.email!, // Email do usuário
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                  Text(
-                    userData.name!,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Email: ${userData.email!}', // Email do usuário
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                     onPressed: () {
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => EditProfilePage(userId: userId)));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => EditProfilePage(userId: userId)));
                     },
-                    child: const Text('Editar Perfil'),
+                    child: const Text('Editar Perfil',
+                        style: TextStyle(
+                          fontSize: 20,
+                        )),
                   ),
                 ],
               ),

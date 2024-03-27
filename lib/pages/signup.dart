@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
@@ -17,15 +18,19 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordController2 = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
   final FirebaseService _fbServices = FirebaseService();
   final _imageUserStandard = const AssetImage('assets/images/user_avatar.png');
 
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
+
+  var _phoneMask = MaskTextInputFormatter(
+      mask: '(##) # ####-####', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
 
   bool _passwordVisible = false;
   bool _passwordVisible2 = false;
@@ -34,6 +39,7 @@ class _SignupState extends State<Signup> {
   @override
   void initState() {
     _nameController.text = "nome 1 teste";
+    _phoneController.text = "(00) 0 0000-0000";
     _emailController.text = "teste1@gmail.com";
     _passwordController.text = "1234abcd";
     _passwordController2.text = "1234abcd";
@@ -88,7 +94,8 @@ class _SignupState extends State<Signup> {
   _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
-      LocalUser localUser = LocalUser(_nameController.text, _emailController.text);
+      LocalUser localUser =
+          LocalUser(_nameController.text, _phoneMask.getUnmaskedText(), _emailController.text);
       final user = await _fbServices.createUserWithEmailAndPassword(
           localUser, _passwordController.text, context);
       if (user != null) {
@@ -166,11 +173,27 @@ class _SignupState extends State<Signup> {
                                   child: TextFormField(
                                     controller: _nameController,
                                     textInputAction: TextInputAction.next,
+                                    keyboardType: TextInputType.text,
                                     decoration: const InputDecoration(labelText: 'Nome'),
-                                    validator: Validator.nome,
+                                    validator: Validator.name,
                                   ),
                                 ),
-                              ),
+                              ), //TextField nome
+                              Container(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                                  child: TextFormField(
+                                    controller: _phoneController,
+                                    textInputAction: TextInputAction.next,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [_phoneMask],
+                                    decoration: const InputDecoration(labelText: 'Telefone'),
+                                    validator: Validator.phone,
+                                  ),
+                                ),
+                              ), //TextField telefone
                               Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -184,7 +207,7 @@ class _SignupState extends State<Signup> {
                                     validator: Validator.email,
                                   ),
                                 ),
-                              ),
+                              ), //TextField email
                               Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -214,7 +237,7 @@ class _SignupState extends State<Signup> {
                                     validator: Validator.password,
                                   ),
                                 ),
-                              ),
+                              ), //TextField senha
                               Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
@@ -244,7 +267,7 @@ class _SignupState extends State<Signup> {
                                         Validator.confirmPassword(value, _passwordController.text),
                                   ),
                                 ),
-                              ),
+                              ), //TextField confirmação de senha
                               Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: ElevatedButton(
