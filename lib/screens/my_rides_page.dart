@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/pages/create_post.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class MyRidesPage extends StatelessWidget {
@@ -25,7 +26,8 @@ class MyRidesPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        onPressed: ()=> ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :("),
+        onPressed: () =>
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CreatePost())),
         child: const Icon(Icons.add),
       ),
     );
