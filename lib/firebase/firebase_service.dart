@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
+import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class FirebaseService {
@@ -60,7 +61,7 @@ class FirebaseService {
     }
   }
 
-  Future<void> saveUserData(LocalUser localUser,BuildContext context) async {
+  Future<void> saveUserData(LocalUser localUser, BuildContext context) async {
     try {
       await _dbInstance.collection('users').doc(localUser.idUser).set(localUser.toMap());
     } catch (e) {
@@ -90,8 +91,7 @@ class FirebaseService {
 
   Future<DocumentSnapshot?> getUserData(String userId, BuildContext context) async {
     try {
-      DocumentSnapshot documentSnapshot =
-      await _dbInstance.collection('users').doc(userId).get();
+      DocumentSnapshot documentSnapshot = await _dbInstance.collection('users').doc(userId).get();
       return documentSnapshot;
     } catch (e) {
       ShowAlertDialog.showAlertDialog(context, 'Erro ao obter os dados do usuário: $e');
@@ -99,11 +99,20 @@ class FirebaseService {
     }
   }
 
-  Future<void> updateUserData(String userId, LocalUser localUser,BuildContext context) async {
+  Future<void> updateUserData(String userId, LocalUser localUser, BuildContext context) async {
     try {
       await _dbInstance.collection('users').doc(userId).update(localUser.toMap());
     } catch (e) {
       ShowAlertDialog.showAlertDialog(context, 'Erro ao atualizar os dados do usuário: $e');
+    }
+  }
+
+  Future<void> savePublicationData(
+      Publication publication, BuildContext context) async {
+    try {
+      await _dbInstance.collection('publications').add(publication.toMap());
+    } catch (e) {
+      ShowAlertDialog.showAlertDialog(context, "Erro: $e");
     }
   }
 }

@@ -19,13 +19,16 @@ class _HomeState extends State<Home> {
 
   // final FirebaseService _fbServices = FirebaseService();
 
-  var currentUser =  FirebaseAuth.instance.currentUser;
+  var currentUser = FirebaseAuth.instance.currentUser;
+
   // var currentUser =  _fbServices.getCurrentUser();
 
   late final List<Widget> _screens = _isRideVisible
       ? <Widget>[
           FeedPage(),
-          const MyRidesPage(),
+          MyRidesPage(
+            userId: currentUser!.uid,
+          ),
           ProfilePage(
             userId: currentUser!.uid,
           ),

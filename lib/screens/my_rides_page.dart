@@ -3,7 +3,9 @@ import 'package:proxima_parada_mobile/pages/create_post.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class MyRidesPage extends StatelessWidget {
-  const MyRidesPage({Key? key}) : super(key: key);
+  final String userId;
+
+  const MyRidesPage({required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,12 @@ class MyRidesPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        onPressed: () =>
-            Navigator.push(context, MaterialPageRoute(builder: (context) => CreatePost())),
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CreatePost(
+                      userId: userId,
+                    ))),
         child: const Icon(Icons.add),
       ),
     );
