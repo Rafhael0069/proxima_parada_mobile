@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
@@ -14,38 +13,10 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  final _controller = StreamController<QuerySnapshot>.broadcast();
   final FirebaseService _fbServices = FirebaseService();
-
-  // Future<Stream<QuerySnapshot>?> _getAllPublications() async {
-  //   Stream<QuerySnapshot> stream = FirebaseFirestore.instance
-  //       .collection("publications")
-  //       .where("statusPublication", isEqualTo: true)
-  //       .where("vacancies", isEqualTo: true)
-  //       .orderBy("departureDate")
-  //       .orderBy("departureTime")
-  //       .snapshots();
-  //   stream.listen((dados) {
-  //     _controller.add(dados);
-  //   });
-  //   return null;
-  // }
-
-  @override
-  void initState() {
-    // _getAllPublications();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.close();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    // DateTime timeBackPressed = DateTime.now();
     var carregandoDados = const Center(
       child: Column(
         children: [Text("Carregando publicações..."), CircularProgressIndicator()],
