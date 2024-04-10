@@ -125,7 +125,6 @@ class FirebaseService {
           .orderBy("departureDate")
           .orderBy("departureTime")
           .snapshots();
-
       return stream;
     } catch (e) {
       print('Erro ao obter as publicações: $e');

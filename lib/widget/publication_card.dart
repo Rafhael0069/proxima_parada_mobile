@@ -169,7 +169,7 @@ class PublicationCard extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8, right: 8),
                       child: OutlinedButton(
                           onPressed: () {
-                            ShowAlertDialog.showAlertDialog(context,"Ainda não implementado :(");
+                            ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
                           },
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(width: 2, color: Colors.blue),

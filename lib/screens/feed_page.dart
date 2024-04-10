@@ -14,27 +14,26 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-
   final _controller = StreamController<QuerySnapshot>.broadcast();
-  // final FirebaseService _fbServices = FirebaseService();
-  
-  Future<Stream<QuerySnapshot>?> _getAllPublications() async {
-    Stream<QuerySnapshot> stream = FirebaseFirestore.instance
-        .collection("publications")
-        .where("statusPublication", isEqualTo: true)
-        .where("vacancies", isEqualTo: true)
-        .orderBy("departureDate")
-        .orderBy("departureTime")
-        .snapshots();
-    stream.listen((dados) {
-      _controller.add(dados);
-    });
-    return null;
-  }
+  final FirebaseService _fbServices = FirebaseService();
+
+  // Future<Stream<QuerySnapshot>?> _getAllPublications() async {
+  //   Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+  //       .collection("publications")
+  //       .where("statusPublication", isEqualTo: true)
+  //       .where("vacancies", isEqualTo: true)
+  //       .orderBy("departureDate")
+  //       .orderBy("departureTime")
+  //       .snapshots();
+  //   stream.listen((dados) {
+  //     _controller.add(dados);
+  //   });
+  //   return null;
+  // }
 
   @override
   void initState() {
-    _getAllPublications();
+    // _getAllPublications();
     super.initState();
   }
 
@@ -53,9 +52,8 @@ class _FeedPageState extends State<FeedPage> {
       ),
     );
 
-    return StreamBuilder(
-      stream: _controller.stream,
-      // stream: _fbServices.getAllPublications().asStream(),
+    return FutureBuilder<Stream<QuerySnapshot>?>(
+      future: _fbServices.getAllPublications(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -66,28 +64,44 @@ class _FeedPageState extends State<FeedPage> {
             if (snapshot.hasError) {
               return const Text("Erro ao carregar dados!");
             }
-            QuerySnapshot? querySnapshot = snapshot.data;
-            if (querySnapshot!.docs.isEmpty) {
-              return Container(
-                padding: const EdgeInsets.all(25),
-                child: const Text(
-                  "Nenhuma publicação! :( ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              );
-            }
+            Stream<QuerySnapshot>? stream = snapshot.data;
 
-            return Expanded(
-                child: ListView.builder(
-                    itemCount: querySnapshot.docs.length,
-                    itemBuilder: (_, index) {
-                      List<DocumentSnapshot> publications = querySnapshot.docs.toList();
-                      DocumentSnapshot documentSnapshot = publications[index];
-                      Publication publication = Publication.fromDocumentSnapshot(documentSnapshot);
+            return StreamBuilder(
+              stream: stream,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return carregandoDados;
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return const Text("Erro ao carregar dados!");
+                    }
+                    QuerySnapshot? querySnapshot = snapshot.data;
+                    if (querySnapshot!.docs.isEmpty) {
+                      return Container(
+                        padding: const EdgeInsets.all(25),
+                        child: const Text(
+                          "Nenhuma publicação! :( ",
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    }
 
-                      return PublicationCard(publication: publication);
-
-                    }));
+                    return Expanded(
+                        child: ListView.builder(
+                            itemCount: querySnapshot.docs.length,
+                            itemBuilder: (_, index) {
+                              List<DocumentSnapshot> publications = querySnapshot.docs.toList();
+                              DocumentSnapshot documentSnapshot = publications[index];
+                              Publication publication =
+                                  Publication.fromDocumentSnapshot(documentSnapshot);
+                              return PublicationCard(publication: publication);
+                            }));
+                }
+              },
+            );
         }
       },
     );
