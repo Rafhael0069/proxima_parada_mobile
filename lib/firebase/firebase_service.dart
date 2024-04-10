@@ -115,4 +115,21 @@ class FirebaseService {
       ShowAlertDialog.showAlertDialog(context, "Erro: $e");
     }
   }
+
+  Future<Stream<QuerySnapshot>?> getAllPublications() async {
+    try {
+      Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+          .collection("publications")
+          .where("statusPublication", isEqualTo: true)
+          .where("vacancies", isEqualTo: true)
+          .orderBy("departureDate")
+          .orderBy("departureTime")
+          .snapshots();
+
+      return stream;
+    } catch (e) {
+      print('Erro ao obter as publicações: $e');
+      return null;
+    }
+  }
 }

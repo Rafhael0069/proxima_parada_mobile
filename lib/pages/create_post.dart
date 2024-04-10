@@ -78,17 +78,13 @@ class _CreatePostState extends State<CreatePost> {
       registrationDate: DateTime.now().toString(),
       atualizationDate: DateTime.now().toString(),
     );
-
     try {
       await _fbServices.savePublicationData(publication, context);
-
-      // Mostrar uma mensagem de sucesso
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Carona criada com sucesso!'),
       ));
     } catch (e) {
       print('Erro ao salvar as alterações: $e');
-      // Mostrar uma mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
       ));

@@ -38,10 +38,31 @@ class Publication {
       this.statusPublication,
       this.vacancies,
       {this.registrationDate,
-        this.atualizationDate,
-        this.idPublication});
+      this.atualizationDate,
+      this.idPublication});
 
   Publication.fromMap(QueryDocumentSnapshot doc) {
+    idUser = doc["idUser"];
+    idPublication = doc.id;
+    userName = doc["userName"];
+    userLocationImage = doc["userLocationImage"];
+    originCity = doc["originCity"];
+    originNeighborhood = doc["originNeighborhood"];
+    originStreet = doc["originStreet"];
+    originNumber = doc["originNumber"];
+    destinationCity = doc["destinationCity"];
+    destinationNeighborhood = doc["destinationNeighborhood"];
+    destinationStreet = doc["destinationStreet"];
+    destinationNumber = doc["destinationNumber"];
+    departureDate = doc["departureDate"];
+    departureTime = doc["departureTime"];
+    statusPublication = doc["statusPublication"];
+    vacancies = doc["vacancies"];
+    registrationDate = doc["registrationDate"];
+    atualizationDate = doc["atualizationDate"];
+  }
+
+  Publication.fromDocumentSnapshot(DocumentSnapshot doc) {
     idUser = doc["idUser"];
     idPublication = doc.id;
     userName = doc["userName"];
