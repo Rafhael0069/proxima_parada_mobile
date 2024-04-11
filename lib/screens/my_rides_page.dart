@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/pages/create_post.dart';
-import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 import 'package:proxima_parada_mobile/widget/loading_widget.dart';
 import 'package:proxima_parada_mobile/widget/publication_card.dart';
 
 class MyRidesPage extends StatelessWidget {
   final String idUser;
 
-  MyRidesPage({required this.idUser});
+  MyRidesPage({super.key, required this.idUser});
 
   final FirebaseService _fbServices = FirebaseService();
 
@@ -23,7 +22,7 @@ class MyRidesPage extends StatelessWidget {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return CustomLoading(message: "Carregando publicações...");
+              return const CustomLoading(message: "Carregando publicações...");
             case ConnectionState.active:
             case ConnectionState.done:
               if (snapshot.hasError) {
@@ -60,7 +59,8 @@ class MyRidesPage extends StatelessWidget {
                                 DocumentSnapshot documentSnapshot = publications[index];
                                 Publication publication =
                                     Publication.fromDocumentSnapshot(documentSnapshot);
-                                return PublicationCard(publication: publication);
+                                return PublicationCard(publication: publication, idUser: idUser,);
+                                // return PublicationCard();
                               });
                   }
                 },

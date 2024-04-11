@@ -43,7 +43,7 @@ class Publication {
 
   Publication.fromMap(QueryDocumentSnapshot doc) {
     idUser = doc["idUser"];
-    idPublication = doc.id;
+    idPublication = doc["idPublication"];
     userName = doc["userName"];
     userLocationImage = doc["userLocationImage"];
     originCity = doc["originCity"];
@@ -64,7 +64,7 @@ class Publication {
 
   Publication.fromDocumentSnapshot(DocumentSnapshot doc) {
     idUser = doc["idUser"];
-    idPublication = doc.id;
+    idPublication = doc["idPublication"];
     userName = doc["userName"];
     userLocationImage = doc["userLocationImage"];
     originCity = doc["originCity"];

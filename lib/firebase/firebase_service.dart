@@ -109,7 +109,8 @@ class FirebaseService {
 
   Future<void> savePublicationData(Publication publication, BuildContext context) async {
     try {
-      await _dbInstance.collection('publications').add(publication.toMap());
+      DocumentReference docRef = await _dbInstance.collection('publications').add(publication.toMap());
+      await docRef.update({'idPublication': docRef.id});
     } catch (e) {
       ShowAlertDialog.showAlertDialog(context, "Erro: $e");
     }
@@ -120,8 +121,6 @@ class FirebaseService {
       try {
         Stream<QuerySnapshot> stream = FirebaseFirestore.instance
             .collection("publications")
-            .where("statusPublication", isEqualTo: true)
-            .where("vacancies", isEqualTo: true)
             .where("idUser", isEqualTo: idUser)
             .orderBy("departureDate")
             .orderBy("departureTime")
