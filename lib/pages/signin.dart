@@ -129,7 +129,7 @@ class _SigninState extends State<Signin> {
                                 style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(45)),
                                 child: const Text(
-                                  'Cadastre-se',
+                                  'Entrar',
                                   style: TextStyle(
                                     fontSize: 20,
                                   ),

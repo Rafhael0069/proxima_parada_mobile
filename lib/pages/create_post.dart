@@ -6,9 +6,9 @@ import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/utils/date_time_formator.dart';
 
 class CreatePost extends StatefulWidget {
-  final String userId;
+  final String idUser;
 
-  const CreatePost({required this.userId});
+  const CreatePost({required this.idUser});
 
   @override
   State<CreatePost> createState() => _CreatePostState();
@@ -47,7 +47,7 @@ class _CreatePostState extends State<CreatePost> {
 
   void _loadUserData() async {
     try {
-      DocumentSnapshot? userData = await _fbServices.getUserData(widget.userId, context);
+      DocumentSnapshot? userData = await _fbServices.getUserData(widget.idUser, context);
       if (userData != null && userData.exists) {
         // Map<String, dynamic> userDataMap = userData.data() as Map<String, dynamic>;
         localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);

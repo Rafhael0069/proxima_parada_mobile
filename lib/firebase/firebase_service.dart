@@ -107,8 +107,7 @@ class FirebaseService {
     }
   }
 
-  Future<void> savePublicationData(
-      Publication publication, BuildContext context) async {
+  Future<void> savePublicationData(Publication publication, BuildContext context) async {
     try {
       await _dbInstance.collection('publications').add(publication.toMap());
     } catch (e) {
@@ -116,19 +115,36 @@ class FirebaseService {
     }
   }
 
-  Future<Stream<QuerySnapshot>?> getAllPublications() async {
-    try {
-      Stream<QuerySnapshot> stream = FirebaseFirestore.instance
-          .collection("publications")
-          .where("statusPublication", isEqualTo: true)
-          .where("vacancies", isEqualTo: true)
-          .orderBy("departureDate")
-          .orderBy("departureTime")
-          .snapshots();
-      return stream;
-    } catch (e) {
-      print('Erro ao obter as publicações: $e');
-      return null;
+  Future<Stream<QuerySnapshot>?> getPublications({String? idUser}) async {
+    if (idUser != null) {
+      try {
+        Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+            .collection("publications")
+            .where("statusPublication", isEqualTo: true)
+            .where("vacancies", isEqualTo: true)
+            .where("idUser", isEqualTo: idUser)
+            .orderBy("departureDate")
+            .orderBy("departureTime")
+            .snapshots();
+        return stream;
+      } catch (e) {
+        print('Erro ao obter as publicações: $e');
+        return null;
+      }
+    } else {
+      try {
+        Stream<QuerySnapshot> stream = FirebaseFirestore.instance
+            .collection("publications")
+            .where("statusPublication", isEqualTo: true)
+            .where("vacancies", isEqualTo: true)
+            .orderBy("departureDate")
+            .orderBy("departureTime")
+            .snapshots();
+        return stream;
+      } catch (e) {
+        print('Erro ao obter as publicações: $e');
+        return null;
+      }
     }
   }
 }

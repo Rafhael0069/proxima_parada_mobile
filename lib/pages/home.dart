@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
       ? <Widget>[
           FeedPage(),
           MyRidesPage(
-            userId: currentUser!.uid,
+            idUser: currentUser!.uid,
           ),
           ProfilePage(
             userId: currentUser!.uid,
