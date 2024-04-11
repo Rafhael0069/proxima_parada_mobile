@@ -11,7 +11,7 @@ import 'package:proxima_parada_mobile/utils/validator.dart';
 class EditProfilePage extends StatefulWidget {
   final String userId;
 
-  EditProfilePage({required this.userId});
+  const EditProfilePage({super.key, required this.userId});
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -133,13 +133,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       await _fbServices.updateUserData(widget.userId, localUser, context);
 
       // Mostrar uma mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Informações atualizadas com sucesso!'),
       ));
     } catch (e) {
       print('Erro ao salvar as alterações: $e');
       // Mostrar uma mensagem de erro
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
       ));
     }
@@ -152,7 +152,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Perfil'),
+        title: const Text('Editar Perfil'),
       ),
       body: Scaffold(
         body: SingleChildScrollView(

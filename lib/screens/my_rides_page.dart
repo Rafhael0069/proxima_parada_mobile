@@ -53,15 +53,18 @@ class MyRidesPage extends StatelessWidget {
                       }
 
                       return ListView.builder(
-                              itemCount: querySnapshot.docs.length,
-                              itemBuilder: (_, index) {
-                                List<DocumentSnapshot> publications = querySnapshot.docs.toList();
-                                DocumentSnapshot documentSnapshot = publications[index];
-                                Publication publication =
-                                    Publication.fromDocumentSnapshot(documentSnapshot);
-                                return PublicationCard(publication: publication, idUser: idUser,);
-                                // return PublicationCard();
-                              });
+                          itemCount: querySnapshot.docs.length,
+                          itemBuilder: (_, index) {
+                            List<DocumentSnapshot> publications = querySnapshot.docs.toList();
+                            DocumentSnapshot documentSnapshot = publications[index];
+                            Publication publication =
+                                Publication.fromDocumentSnapshot(documentSnapshot);
+                            return PublicationCard(
+                              publication: publication,
+                              idUser: idUser,
+                            );
+                            // return PublicationCard();
+                          });
                   }
                 },
               );

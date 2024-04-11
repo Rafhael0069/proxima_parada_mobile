@@ -8,7 +8,7 @@ import 'package:proxima_parada_mobile/utils/date_time_formator.dart';
 class CreatePost extends StatefulWidget {
   final String idUser;
 
-  const CreatePost({required this.idUser});
+  const CreatePost({super.key, required this.idUser});
 
   @override
   State<CreatePost> createState() => _CreatePostState();
@@ -80,13 +80,13 @@ class _CreatePostState extends State<CreatePost> {
     );
     try {
       await _fbServices.savePublicationData(publication, context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Carona criada com sucesso!'),
       ));
     } catch (e) {
       print('Erro ao salvar as alterações: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Erro ao salvar a postagem. Tente novamente mais tarde.'),
       ));
     }
     Navigator.pop(context);
@@ -95,14 +95,14 @@ class _CreatePostState extends State<CreatePost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Creação de Postagem")),
+      appBar: AppBar(title: const Text("Creação de Postagem")),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 6),
                 child: Text(
                   "Origem",
@@ -153,7 +153,7 @@ class _CreatePostState extends State<CreatePost> {
                       },
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Flexible(
                     child: TextField(
                       controller: _departureTimeController,
@@ -176,7 +176,7 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ],
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   "Destino",

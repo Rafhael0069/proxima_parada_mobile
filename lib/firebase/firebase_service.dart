@@ -107,12 +107,25 @@ class FirebaseService {
     }
   }
 
-  Future<void> savePublicationData(Publication publication, BuildContext context) async {
-    try {
-      DocumentReference docRef = await _dbInstance.collection('publications').add(publication.toMap());
-      await docRef.update({'idPublication': docRef.id});
-    } catch (e) {
-      ShowAlertDialog.showAlertDialog(context, "Erro: $e");
+  Future<void> savePublicationData(Publication publication, BuildContext context,
+      {var atualization}) async {
+    if (atualization == null) {
+      try {
+        DocumentReference docRef =
+            await _dbInstance.collection('publications').add(publication.toMap());
+        await docRef.update({'idPublication': docRef.id});
+      } catch (e) {
+        ShowAlertDialog.showAlertDialog(context, "Erro: $e");
+      }
+    } else {
+      try {
+        await _dbInstance
+            .collection("publications")
+            .doc(publication.idPublication)
+            .update(atualization);
+      } catch (e) {
+        ShowAlertDialog.showAlertDialog(context, "Erro: $e");
+      }
     }
   }
 

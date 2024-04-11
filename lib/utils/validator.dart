@@ -14,7 +14,6 @@ class Validator {
         RegExp(r'(^(?:\+|00)?\d{1,3}\s?)?(?:\(?\d{2,3}\)?[\s.-]?)?\d{4,5}[\s.-]?\d{4}$');
 
     if (phone == null || phone.isEmpty) {
-      print("validator: testando vasil");
       return 'Por favor, digite seu número de telefone';
     }
 
