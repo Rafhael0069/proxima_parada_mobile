@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
-import 'package:proxima_parada_mobile/pages/create_post.dart';
+import 'package:proxima_parada_mobile/pages/create_and_edit_post.dart';
 import 'package:proxima_parada_mobile/widget/loading_widget.dart';
 import 'package:proxima_parada_mobile/widget/publication_card.dart';
 
@@ -77,7 +77,7 @@ class MyRidesPage extends StatelessWidget {
         onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => CreatePost(
+                builder: (context) => CreateAndEditPost(
                       idUser: idUser,
                     ))),
         child: const Icon(Icons.add),

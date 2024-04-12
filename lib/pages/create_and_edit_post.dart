@@ -5,16 +5,17 @@ import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/utils/date_time_formator.dart';
 
-class CreatePost extends StatefulWidget {
+class CreateAndEditPost extends StatefulWidget {
   final String idUser;
+  Publication? existentPublication;
 
-  const CreatePost({super.key, required this.idUser});
+  CreateAndEditPost({super.key, required this.idUser, this.existentPublication});
 
   @override
-  State<CreatePost> createState() => _CreatePostState();
+  State<CreateAndEditPost> createState() => _CreateAndEditPostState();
 }
 
-class _CreatePostState extends State<CreatePost> {
+class _CreateAndEditPostState extends State<CreateAndEditPost> {
   final TextEditingController _originCityController = TextEditingController();
   final TextEditingController _originNeighborhoodController = TextEditingController();
   final TextEditingController _originStreetController = TextEditingController();
@@ -28,19 +29,26 @@ class _CreatePostState extends State<CreatePost> {
 
   LocalUser? localUser;
   final FirebaseService _fbServices = FirebaseService();
+  late bool newPublication;
+  late Publication publicationData;
 
   @override
   void initState() {
-    _originCityController.text = 'Cidade testes 01';
-    _originNeighborhoodController.text = 'Bairro testes 01';
-    _originStreetController.text = 'Rua testes 01';
-    _originNumberController.text = '01';
-    _destinationCityController.text = 'Cidade testes 02';
-    _destinationNeighborhoodController.text = 'Bairro testes 02';
-    _destinationStreetController.text = 'Rua testes 02';
-    _destinationNumberController.text = '02';
-    _departureDateController.text = '20/07/2023';
-    _departureTimeController.text = '08:00 AM';
+    newPublication = widget.existentPublication != null ? false : true;
+    if (!newPublication) {
+      publicationData = widget.existentPublication!;
+      _originCityController.text = publicationData.originCity!;
+      _originNeighborhoodController.text = publicationData.originNeighborhood!;
+      _originStreetController.text = publicationData.originStreet!;
+      _originNumberController.text = publicationData.originNumber!;
+      _destinationCityController.text = publicationData.destinationCity!;
+      _destinationNeighborhoodController.text = publicationData.destinationNeighborhood!;
+      _destinationStreetController.text = publicationData.destinationStreet!;
+      _destinationNumberController.text = publicationData.destinationNumber!;
+      _departureDateController.text = publicationData.departureDate!;
+      _departureTimeController.text = publicationData.departureTime!;
+    }
+
     _loadUserData();
     super.initState();
   }
@@ -58,7 +66,6 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   _createPublication() async {
-    // LocalUser user = localUser?.toMap();
     Publication publication = Publication(
       localUser!.idUser,
       localUser!.name,
@@ -75,14 +82,30 @@ class _CreatePostState extends State<CreatePost> {
       _departureTimeController.text,
       true,
       true,
-      registrationDate: DateTime.now().toString(),
       atualizationDate: DateTime.now().toString(),
     );
+    if (!newPublication) {
+      publication.registrationDate = publicationData.registrationDate;
+      publication.idPublication = publicationData.idPublication;
+    } else {
+      publication.registrationDate = DateTime.now().toString();
+    }
     try {
-      await _fbServices.savePublicationData(publication, context);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Carona criada com sucesso!'),
-      ));
+      if (!newPublication) {
+        await _fbServices.savePublicationData(publication, context,
+            atualization: publication.toMap());
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Carona atualizada com sucesso!'),
+        ));
+      } else {
+        await _fbServices.savePublicationData(
+          publication,
+          context,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Carona criada com sucesso!'),
+        ));
+      }
     } catch (e) {
       print('Erro ao salvar as alterações: $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

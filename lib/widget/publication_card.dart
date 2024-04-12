@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
+import 'package:proxima_parada_mobile/pages/create_and_edit_post.dart';
 
 import '../utils/show_alert_dialog.dart';
 
@@ -102,12 +103,12 @@ class PublicationCard extends StatelessWidget {
   _updatePublication(Publication publication, BuildContext context, var atualization) async {
     try {
       await _fbServices.savePublicationData(publication, context, atualization: atualization);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Carona atualizada com sucesso!'),
       ));
     } catch (e) {
       print('Erro ao salvar as alterações: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
       ));
     }
@@ -228,10 +229,15 @@ class PublicationCard extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: publication.statusPublication!
                               ? () {
-                                  // _showDialogRegistrationOrChangePublication(
-                                  //     publication: publication);
-                                  ShowAlertDialog.showAlertDialog(
-                                      context, "Ainda não implementado :(");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreateAndEditPost(
+                                      idUser: idUser!,
+                                      existentPublication: publication,
+                                    )));
+                                  // ShowAlertDialog.showAlertDialog(
+                                  //     context, "Ainda não implementado :(");
                                 }
                               : null,
                           style: publication.statusPublication!
