@@ -4,7 +4,7 @@ class Publication {
   String? idUser;
   String? idPublication;
   String? userName;
-  String? userOccupation;
+  String? userPhoneNumber;
   String? userLocationImage;
   String? originCity;
   String? originNeighborhood;
@@ -24,6 +24,7 @@ class Publication {
   Publication(
       this.idUser,
       this.userName,
+      this.userPhoneNumber,
       this.userLocationImage,
       this.originCity,
       this.originNeighborhood,
@@ -45,6 +46,7 @@ class Publication {
     idUser = doc["idUser"];
     idPublication = doc["idPublication"];
     userName = doc["userName"];
+    userPhoneNumber = doc["userPhoneNumber"];
     userLocationImage = doc["userLocationImage"];
     originCity = doc["originCity"];
     originNeighborhood = doc["originNeighborhood"];
@@ -66,6 +68,7 @@ class Publication {
     idUser = doc["idUser"];
     idPublication = doc["idPublication"];
     userName = doc["userName"];
+    userPhoneNumber = doc["userPhoneNumber"];
     userLocationImage = doc["userLocationImage"];
     originCity = doc["originCity"];
     originNeighborhood = doc["originNeighborhood"];
@@ -87,6 +90,7 @@ class Publication {
     Map<String, dynamic> map = {
       "idUser": idUser,
       "userName": userName,
+      "userPhoneNumber": userPhoneNumber,
       "userLocationImage": userLocationImage,
       "originCity": originCity,
       "originNeighborhood": originNeighborhood,

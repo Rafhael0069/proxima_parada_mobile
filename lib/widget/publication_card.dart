@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/pages/create_and_edit_post.dart';
-
-import '../utils/show_alert_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class PublicationCard extends StatelessWidget {
   PublicationCard({required this.publication, this.idUser, Key? key}) : super(key: key);
@@ -229,13 +229,13 @@ class PublicationCard extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: publication.statusPublication!
                               ? () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateAndEditPost(
-                                      idUser: idUser!,
-                                      existentPublication: publication,
-                                    )));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CreateAndEditPost(
+                                                idUser: idUser!,
+                                                existentPublication: publication,
+                                              )));
                                   // ShowAlertDialog.showAlertDialog(
                                   //     context, "Ainda não implementado :(");
                                 }
@@ -480,13 +480,13 @@ class PublicationCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8, right: 8),
                         child: OutlinedButton(
-                            onPressed: () {
-                              ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
-                            },
+                            onPressed: () => sendMessageOnWhatsApp(
+                                context,
+                                publication.userPhoneNumber!,
+                                "Olá! Eu sou ${publication.userName}, estou entrando em contato por meio do aplicativo Próxima Parada, você pode conversar agora?"),
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(width: 2, color: Colors.blue),
                             ),
-                            // child: Text("Cancelar", style: TextStyle(color: Colors.red),)
                             child: const Text(
                               "Conversar com o motorista.",
                               style: TextStyle(fontSize: 16, color: Colors.blue),
@@ -494,9 +494,20 @@ class PublicationCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                ), //Row actions
+                ),
               ],
             ),
           );
+  }
+
+  void sendMessageOnWhatsApp(BuildContext context, String phoneNumber, String message) async {
+    String url = "whatsapp://send?phone=+55$phoneNumber&text=${Uri.encodeFull(message)}";
+    await launchUrlString(url);
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Ocorreu um erro ao tentar abrir o whatsApp")));
+    }
   }
 }

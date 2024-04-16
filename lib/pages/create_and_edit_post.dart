@@ -48,7 +48,141 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
       _departureDateController.text = publicationData.departureDate!;
       _departureTimeController.text = publicationData.departureTime!;
     }
-
+    else {
+      var dadosExemplo = [
+        {
+          "originCity": "London",
+          "originNeighborhood": "Westminster",
+          "originStreet": "Abbey Road",
+          "originNumber": "10",
+          "destinationCity": "Paris",
+          "destinationNeighborhood": "Montmartre",
+          "destinationStreet": "Rue de Rivoli",
+          "destinationNumber": "20",
+          "departureDate": "2024-04-18",
+          "departureTime": "10:30 AM"
+        },
+        {
+          "originCity": "Tokyo",
+          "originNeighborhood": "Shinjuku",
+          "originStreet": "Kabukicho",
+          "originNumber": "7-1",
+          "destinationCity": "Kyoto",
+          "destinationNeighborhood": "Gion",
+          "destinationStreet": "Hanamikoji Dori",
+          "destinationNumber": "15",
+          "departureDate": "2024-04-20",
+          "departureTime": "09:45 AM"
+        },
+        {
+          "originCity": "Sydney",
+          "originNeighborhood": "Circular Quay",
+          "originStreet": "George Street",
+          "originNumber": "30",
+          "destinationCity": "Melbourne",
+          "destinationNeighborhood": "Fitzroy",
+          "destinationStreet": "Brunswick Street",
+          "destinationNumber": "40",
+          "departureDate": "2024-04-22",
+          "departureTime": "11:00 AM"
+        },
+        {
+          "originCity": "Rome",
+          "originNeighborhood": "Trastevere",
+          "originStreet": "Via della Lungara",
+          "originNumber": "55",
+          "destinationCity": "Venice",
+          "destinationNeighborhood": "San Marco",
+          "destinationStreet": "Piazza San Marco",
+          "destinationNumber": "25",
+          "departureDate": "2024-04-25",
+          "departureTime": "12:15 PM"
+        },
+        {
+          "originCity": "Berlin",
+          "originNeighborhood": "Mitte",
+          "originStreet": "Alexanderplatz",
+          "originNumber": "70",
+          "destinationCity": "Munich",
+          "destinationNeighborhood": "Schwabing",
+          "destinationStreet": "Leopoldstraße",
+          "destinationNumber": "80",
+          "departureDate": "2024-04-27",
+          "departureTime": "02:30 PM"
+        },
+        {
+          "originCity": "Madrid",
+          "originNeighborhood": "Sol",
+          "originStreet": "Gran Vía",
+          "originNumber": "90",
+          "destinationCity": "Barcelona",
+          "destinationNeighborhood": "Gothic Quarter",
+          "destinationStreet": "La Rambla",
+          "destinationNumber": "100",
+          "departureDate": "2024-04-30",
+          "departureTime": "03:45 PM"
+        },
+        {
+          "originCity": "Toronto",
+          "originNeighborhood": "Downtown",
+          "originStreet": "Yonge Street",
+          "originNumber": "110",
+          "destinationCity": "Vancouver",
+          "destinationNeighborhood": "Gastown",
+          "destinationStreet": "Water Street",
+          "destinationNumber": "120",
+          "departureDate": "2024-05-02",
+          "departureTime": "04:00 PM"
+        },
+        {
+          "originCity": "Dubai",
+          "originNeighborhood": "Downtown Dubai",
+          "originStreet": "Sheikh Zayed Road",
+          "originNumber": "130",
+          "destinationCity": "Abu Dhabi",
+          "destinationNeighborhood": "Corniche",
+          "destinationStreet": "Corniche Road",
+          "destinationNumber": "140",
+          "departureDate": "2024-05-05",
+          "departureTime": "05:30 PM"
+        },
+        {
+          "originCity": "Seoul",
+          "originNeighborhood": "Gangnam",
+          "originStreet": "Gangnam-daero",
+          "originNumber": "150",
+          "destinationCity": "Busan",
+          "destinationNeighborhood": "Haeundae",
+          "destinationStreet": "Haeundae-ro",
+          "destinationNumber": "160",
+          "departureDate": "2024-05-08",
+          "departureTime": "06:45 PM"
+        },
+        {
+          "originCity": "Moscow",
+          "originNeighborhood": "Red Square",
+          "originStreet": "Kremlin Embankment",
+          "originNumber": "170",
+          "destinationCity": "Saint Petersburg",
+          "destinationNeighborhood": "Nevsky Prospekt",
+          "destinationStreet": "Nevsky Avenue",
+          "destinationNumber": "180",
+          "departureDate": "2024-05-10",
+          "departureTime": "07:00 PM"
+        }
+      ];
+      int index = 0;
+      _originCityController.text = dadosExemplo[index]["originCity"]!;
+      _originNeighborhoodController.text = dadosExemplo[index]["originNeighborhood"]!;
+      _originStreetController.text = dadosExemplo[index]["originStreet"]!;
+      _originNumberController.text = dadosExemplo[index]["originNumber"]!;
+      _destinationCityController.text = dadosExemplo[index]["destinationCity"]!;
+      _destinationNeighborhoodController.text = dadosExemplo[index]["destinationNeighborhood"]!;
+      _destinationStreetController.text = dadosExemplo[index]["destinationStreet"]!;
+      _destinationNumberController.text = dadosExemplo[index]["destinationNumber"]!;
+      _departureDateController.text = dadosExemplo[index]["departureDate"]!;
+      _departureTimeController.text = dadosExemplo[index]["departureTime"]!;
+    }
     _loadUserData();
     super.initState();
   }
@@ -69,6 +203,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
     Publication publication = Publication(
       localUser!.idUser,
       localUser!.name,
+      localUser!.phoneNumber,
       localUser!.locationImage,
       _originCityController.text,
       _originNeighborhoodController.text,

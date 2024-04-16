@@ -9,8 +9,6 @@ class ProfilePage extends StatelessWidget {
 
   const ProfilePage({super.key, required this.userId});
 
-
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -101,7 +99,7 @@ class ProfilePage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   )),
                               Text(
-                                userData.phone!,
+                                userData.phoneNumber!,
                                 style: const TextStyle(
                                   fontSize: 18,
                                 ),

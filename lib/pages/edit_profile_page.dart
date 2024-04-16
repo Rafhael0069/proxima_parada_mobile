@@ -37,8 +37,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
-    super.initState();
     _loadUserData();
+    super.initState();
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -94,7 +94,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
         setState(() {
           _nameController.text = localUser.name!;
-          _phoneController.text = localUser.phone!;
+          _phoneController.text = localUser.phoneNumber!;
           _emailController.text = localUser.email!;
           if (localUser.locationImage != null) {
             print('ImageUser: ${localUser.locationImage!}');
@@ -127,7 +127,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _saveChanges() async {
     try {
       localUser.name = _nameController.text.trim();
-      localUser.phone = _phoneMask.getUnmaskedText();
+      localUser.phoneNumber = _phoneMask.getUnmaskedText();
       localUser.email = _emailController.text.trim();
 
       await _fbServices.updateUserData(widget.userId, localUser, context);
