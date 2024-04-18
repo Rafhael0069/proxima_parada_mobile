@@ -61,6 +61,41 @@ class FirebaseService {
     }
   }
 
+  Future<Object?> changeEmail(BuildContext context, String newEmail) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        await user.updateEmail(newEmail);
+      }
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'invalid-email') {
+        ShowAlertDialog.showAlertDialog(context, "E-mail inválido.");
+      } else if (error.code == 'email-already-in-use') {
+        ShowAlertDialog.showAlertDialog(context, "Esse e-mail já está em uso por outro usiário.");
+      } else if (error.code == 'weak-password') {
+        ShowAlertDialog.showAlertDialog(
+            context, "Sua senha é muito fraca. digite uma senha mais forte.");
+      } else {
+        ShowAlertDialog.showAlertDialog(context,
+            "Ocorreu um erro ao acesser nossos servidores. por favor tente novamente mais tarde");
+      }
+    }
+  }
+
+  Future<void> changePassword(String newPassword) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        await user.updatePassword(newPassword);
+      }
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'change_password_failed',
+        message: 'Falha ao alterar a senha: $e',
+      );
+    }
+  }
+
   Future<void> saveUserData(LocalUser localUser, BuildContext context) async {
     try {
       await _dbInstance.collection('users').doc(localUser.idUser).set(localUser.toMap());

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
@@ -21,7 +23,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  // final TextEditingController _phoneController = TextEditingController();
+  final MaskedTextController _phoneController = MaskedTextController(mask: '(00) 0 0000-0000');
   final TextEditingController _emailController = TextEditingController();
   final FirebaseService _fbServices = FirebaseService();
   String _imageUserStandard =
@@ -30,8 +33,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
   bool _loading = false;
-  var _phoneMask = MaskTextInputFormatter(
-      mask: '(##) # ####-####', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
 
   LocalUser localUser = LocalUser.empty();
 
@@ -127,9 +128,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _saveChanges() async {
     try {
       localUser.name = _nameController.text.trim();
-      localUser.phoneNumber = _phoneMask.getUnmaskedText();
-      localUser.email = _emailController.text.trim();
-
+      localUser.phoneNumber = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
       await _fbServices.updateUserData(widget.userId, localUser, context);
 
       // Mostrar uma mensagem de sucesso
@@ -207,7 +206,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               controller: _phoneController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.number,
-                              inputFormatters: [_phoneMask],
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               decoration: const InputDecoration(labelText: 'Telefone'),
                               validator: Validator.phone,
                             ),
@@ -219,6 +218,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
                             child: TextFormField(
+                              readOnly: true,
                               controller: _emailController,
                               textInputAction: TextInputAction.next,
                               decoration: const InputDecoration(labelText: 'Email'),
@@ -266,24 +266,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
       ),
-      // body: Padding(
-      //   padding: EdgeInsets.all(16.0),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: <Widget>[
-      //       TextField(
-      //         controller: _nameController,
-      //         decoration: InputDecoration(labelText: 'Nome'),
-      //       ),
-      //       SizedBox(height: 10),
-      //       TextField(
-      //         controller: _emailController,
-      //         decoration: InputDecoration(labelText: 'Email'),
-      //       ),
-      //       SizedBox(height: 10),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

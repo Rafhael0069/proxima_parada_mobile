@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/edit_profile_page.dart';
@@ -7,7 +8,10 @@ import 'package:proxima_parada_mobile/pages/edit_profile_page.dart';
 class ProfilePage extends StatelessWidget {
   final String userId;
 
-  const ProfilePage({super.key, required this.userId});
+  ProfilePage({super.key, required this.userId});
+
+  final _phoneMask = MaskTextInputFormatter(
+      mask: '(##) # ####-####', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +103,7 @@ class ProfilePage extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   )),
                               Text(
-                                userData.phoneNumber!,
+                                _phoneMask.maskText(userData.phoneNumber!),
                                 style: const TextStyle(
                                   fontSize: 18,
                                 ),
