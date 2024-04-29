@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
@@ -245,19 +244,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                      child: const Text(
-                        'Cancelar',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
                     ),
                   )
                 ],
