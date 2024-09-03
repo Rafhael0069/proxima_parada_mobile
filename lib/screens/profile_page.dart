@@ -20,8 +20,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    return FutureBuilder(
-      future: FirebaseService().getUserData(userId, context),
+    return StreamBuilder(
+      stream: FirebaseService.getUserStream(userId, context),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

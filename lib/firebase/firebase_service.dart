@@ -134,6 +134,16 @@ class FirebaseService {
     }
   }
 
+  static Stream<DocumentSnapshot>? getUserStream(String userId, BuildContext context)  {
+    try {
+      Stream<DocumentSnapshot> documentSnapshot =  FirebaseFirestore.instance.collection('users').doc(userId).snapshots();
+      return documentSnapshot;
+    } catch (e) {
+      ShowAlertDialog.showAlertDialog(context, 'Erro ao obter os dados do usuário: $e');
+      return null;
+    }
+  }
+
   Future<void> updateUserData(String userId, LocalUser localUser, BuildContext context) async {
     try {
       await _dbInstance.collection('users').doc(userId).update(localUser.toMap());
