@@ -7,9 +7,9 @@ import 'package:proxima_parada_mobile/utils/date_time_formator.dart';
 
 class CreateAndEditPost extends StatefulWidget {
   final String idUser;
-  Publication? existentPublication;
+  final Publication? existentPublication;
 
-  CreateAndEditPost({super.key, required this.idUser, this.existentPublication});
+  const CreateAndEditPost({super.key, required this.idUser, this.existentPublication});
 
   @override
   State<CreateAndEditPost> createState() => _CreateAndEditPostState();
@@ -242,7 +242,6 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
         ));
       }
     } catch (e) {
-      print('Erro ao salvar as alterações: $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Erro ao salvar a postagem. Tente novamente mais tarde.'),
       ));

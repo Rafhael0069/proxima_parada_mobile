@@ -14,12 +14,12 @@ class AppThemes {
     brightness: Brightness.light,
     primaryColor: AppColors.primaryColor,
     scaffoldBackgroundColor: AppColors.backgroundColor,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primaryColor,
       secondary: AppColors.secondaryColor,
       // Use 'secondary' para a cor de destaque
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.primaryColor,
       titleTextStyle: TextStyle(color: Colors.white),
     ),
@@ -30,12 +30,12 @@ class AppThemes {
     brightness: Brightness.dark,
     primaryColor: AppColors.secondaryColor,
     scaffoldBackgroundColor: Colors.grey[900],
-    colorScheme: ColorScheme.dark(
+    colorScheme: const ColorScheme.dark(
       primary: AppColors.secondaryColor,
       secondary: AppColors.accentColor,
       // Use 'secondary' para a cor de destaque
     ),
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.secondaryColor,
       titleTextStyle: TextStyle(color: Colors.white),
     ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/pages/create_and_edit_post.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class PublicationCard extends StatelessWidget {
@@ -107,7 +106,6 @@ class PublicationCard extends StatelessWidget {
         content: Text('Carona atualizada com sucesso!'),
       ));
     } catch (e) {
-      print('Erro ao salvar as alterações: $e');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
       ));

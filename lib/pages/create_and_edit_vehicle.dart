@@ -141,7 +141,6 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
       ));
     } catch (e) {
       setState(() => _loading = false);
-      print('Erro ao salvar as alterações: $e');
       // Mostrar uma mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content:
@@ -263,7 +262,7 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
                                   userVehicle.plate != null
                                       ? 'Salvar Alterações'
                                       : 'Salvar Veículo',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 20,
                                   ),
                                 ),

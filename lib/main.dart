@@ -22,7 +22,7 @@ Future<void> main() async {
   final currentUser = await FirebaseService().getCurrentUser();
 
   runApp(MaterialApp(
-    home: currentUser != null ?  Home() :  Welcome(),
+    home: currentUser != null ?  const Home() :  const Welcome(),
     debugShowCheckedModeBanner: true,
     theme: AppThemes.lightTheme, // Use o tema claro
     // darkTheme: AppThemes.darkTheme,

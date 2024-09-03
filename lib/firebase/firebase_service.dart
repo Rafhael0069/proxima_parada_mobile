@@ -84,6 +84,7 @@ class FirebaseService {
             "Ocorreu um erro ao acesser nossos servidores. por favor tente novamente mais tarde");
       }
     }
+    return null;
   }
 
   Future<void> changePassword(String newPassword) async {

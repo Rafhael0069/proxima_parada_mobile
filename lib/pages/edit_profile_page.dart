@@ -15,7 +15,7 @@ class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key, required this.userId});
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
@@ -97,7 +97,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _phoneController.text = localUser.phoneNumber!;
           _emailController.text = localUser.email!;
           if (localUser.imageLocation != null) {
-            print('ImageUser: ${localUser.imageLocation!}');
             _imageUserStandard = localUser.imageLocation!;
           }
         });
@@ -135,7 +134,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         content: Text('Informações atualizadas com sucesso!'),
       ));
     } catch (e) {
-      print('Erro ao salvar as alterações: $e');
       // Mostrar uma mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),

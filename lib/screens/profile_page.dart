@@ -317,7 +317,7 @@ class ProfilePage extends StatelessWidget {
                                   // ShowAlertDialog.showAlertDialog(context, "Desculpe, ainda não implementado :(");
                                 },
                                 child: Text(userData.userVehicle?.plate != null ? 'Editar veiculo' : 'Adicionar veículo',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 20,
                                     )),
                               ),
