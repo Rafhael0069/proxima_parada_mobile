@@ -179,6 +179,8 @@ class ProfilePage extends StatelessWidget {
                                   Image(
                                     image: NetworkImage(
                                         userData.userVehicle!.imageLocation!),
+                                    width: 350,
+                                    height: 350,
                                   ),
                                   Row(
                                     children: [
@@ -186,7 +188,7 @@ class ProfilePage extends StatelessWidget {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12),
                                         child: Icon(
-                                          Icons.perm_identity_outlined,
+                                          Icons.directions_car,
                                           size: 50,
                                         ),
                                       ),
@@ -215,7 +217,7 @@ class ProfilePage extends StatelessWidget {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12),
                                         child: Icon(
-                                          Icons.phone_outlined,
+                                          Icons.directions_car,
                                           size: 50,
                                         ),
                                       ),
@@ -244,7 +246,7 @@ class ProfilePage extends StatelessWidget {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12),
                                         child: Icon(
-                                          Icons.email_outlined,
+                                          Icons.color_lens,
                                           size: 50,
                                         ),
                                       ),
@@ -274,7 +276,7 @@ class ProfilePage extends StatelessWidget {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12),
                                         child: Icon(
-                                          Icons.email_outlined,
+                                          Icons.pin,
                                           size: 50,
                                         ),
                                       ),

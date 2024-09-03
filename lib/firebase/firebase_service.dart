@@ -17,17 +17,18 @@ class FirebaseService {
     return FirebaseAuth.instance.currentUser;
   }
 
-  Future<User?> signInWithEmailAndPassword(String email, String password, context) async {
+  Future<User?> signInWithEmailAndPassword(
+      String email, String password, context) async {
     try {
-      final UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email: email, password: password);
       return userCredential.user;
     } on FirebaseAuthException catch (error) {
       if (error.code == 'invalid-email') {
         ShowAlertDialog.showAlertDialog(context, "E-mail inválido!");
       } else if (error.code == 'user-not-found') {
-        ShowAlertDialog.showAlertDialog(
-            context, "Não há registro de usuário existente correspondente ao e-mail fornecido.");
+        ShowAlertDialog.showAlertDialog(context,
+            "Não há registro de usuário existente correspondente ao e-mail fornecido.");
       } else if (error.code == 'wrong-password') {
         ShowAlertDialog.showAlertDialog(context, "Senha incorreta.");
       } else {
@@ -38,17 +39,20 @@ class FirebaseService {
     }
   }
 
-  Future<Object?> createUserWithEmailAndPassword(LocalUser localUser, String password, context) async {
+  Future<Object?> createUserWithEmailAndPassword(
+      LocalUser localUser, String password, context) async {
     try {
       final UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(email: localUser.email!, password: password);
+          await _auth.createUserWithEmailAndPassword(
+              email: localUser.email!, password: password);
       localUser.idUser = userCredential.user!.uid;
       return localUser;
     } on FirebaseAuthException catch (error) {
       if (error.code == 'invalid-email') {
         ShowAlertDialog.showAlertDialog(context, "E-mail inválido.");
       } else if (error.code == 'email-already-in-use') {
-        ShowAlertDialog.showAlertDialog(context, "Esse e-mail já está em uso por outro usiário.");
+        ShowAlertDialog.showAlertDialog(
+            context, "Esse e-mail já está em uso por outro usiário.");
       } else if (error.code == 'weak-password') {
         ShowAlertDialog.showAlertDialog(
             context, "Sua senha é muito fraca. digite uma senha mais forte.");
@@ -70,7 +74,8 @@ class FirebaseService {
       if (error.code == 'invalid-email') {
         ShowAlertDialog.showAlertDialog(context, "E-mail inválido.");
       } else if (error.code == 'email-already-in-use') {
-        ShowAlertDialog.showAlertDialog(context, "Esse e-mail já está em uso por outro usiário.");
+        ShowAlertDialog.showAlertDialog(
+            context, "Esse e-mail já está em uso por outro usiário.");
       } else if (error.code == 'weak-password') {
         ShowAlertDialog.showAlertDialog(
             context, "Sua senha é muito fraca. digite uma senha mais forte.");
@@ -97,19 +102,30 @@ class FirebaseService {
 
   Future<void> saveUserData(LocalUser localUser, BuildContext context) async {
     try {
-      await _dbInstance.collection('users').doc(localUser.idUser).set(localUser.toMap());
+      await _dbInstance
+          .collection('users')
+          .doc(localUser.idUser)
+          .set(localUser.toMap());
     } catch (e) {
       ShowAlertDialog.showAlertDialog(context, "Erro: $e");
     }
   }
 
-  Future<String?> uploadImage(LocalUser localUser, String pickedImage) async {
+  Future<String?> uploadImage(LocalUser localUser, String pickedImage,
+      {bool? isCar}) async {
     try {
-      String fileName = '${localUser.idUser}.jpg';
+      String fileName;
+      Reference fileRef;
       SettableMetadata metadata = SettableMetadata(
         contentType: 'image/jpeg',
       );
-      Reference fileRef = _storageRef.child("images/users/$fileName");
+      if (isCar != null && isCar) {
+        fileName = '${localUser.idUser}carimage.jpg';
+        fileRef = _storageRef.child("images/cars/$fileName");
+      } else {
+        fileName = '${localUser.idUser}.jpg';
+        fileRef = _storageRef.child("images/users/$fileName");
+      }
       UploadTask uploadTask = fileRef.putFile(File(pickedImage), metadata);
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
       if (taskSnapshot.state == TaskState.success) {
@@ -123,39 +139,55 @@ class FirebaseService {
     }
   }
 
-  Future<DocumentSnapshot?> getUserData(String userId, BuildContext context) async {
+  Future<DocumentSnapshot?> getUserData(
+      String userId, BuildContext context) async {
     try {
-      DocumentSnapshot documentSnapshot = await _dbInstance.collection('users').doc(userId).get();
+      DocumentSnapshot documentSnapshot =
+          await _dbInstance.collection('users').doc(userId).get();
       return documentSnapshot;
     } catch (e) {
-      ShowAlertDialog.showAlertDialog(context, 'Erro ao obter os dados do usuário: $e');
+      ShowAlertDialog.showAlertDialog(
+          context, 'Erro ao obter os dados do usuário: $e');
       return null;
     }
   }
 
-  static Stream<DocumentSnapshot>? getUserStream(String userId, BuildContext context)  {
+  static Stream<DocumentSnapshot>? getUserStream(
+      String userId, BuildContext context) {
     try {
-      Stream<DocumentSnapshot> documentSnapshot =  FirebaseFirestore.instance.collection('users').doc(userId).snapshots();
+      Stream<DocumentSnapshot> documentSnapshot = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .snapshots();
       return documentSnapshot;
     } catch (e) {
-      ShowAlertDialog.showAlertDialog(context, 'Erro ao obter os dados do usuário: $e');
+      ShowAlertDialog.showAlertDialog(
+          context, 'Erro ao obter os dados do usuário: $e');
       return null;
     }
   }
 
-  Future<void> updateUserData(String userId, LocalUser localUser, BuildContext context) async {
+  Future<void> updateUserData(
+      String userId, LocalUser localUser, BuildContext context) async {
     try {
-      await _dbInstance.collection('users').doc(userId).update(localUser.toMap());
+      await _dbInstance
+          .collection('users')
+          .doc(userId)
+          .update(localUser.toMap());
     } catch (e) {
-      ShowAlertDialog.showAlertDialog(context, 'Erro ao atualizar os dados do usuário: $e');
+      ShowAlertDialog.showAlertDialog(
+          context, 'Erro ao atualizar os dados do usuário: $e');
     }
   }
 
-  Future<void> savePublicationData(Publication publication, BuildContext context, {var atualization}) async {
+  Future<void> savePublicationData(
+      Publication publication, BuildContext context,
+      {var atualization}) async {
     if (atualization == null) {
       try {
-        DocumentReference docRef =
-            await _dbInstance.collection('publications').add(publication.toMap());
+        DocumentReference docRef = await _dbInstance
+            .collection('publications')
+            .add(publication.toMap());
         await docRef.update({'idPublication': docRef.id});
       } catch (e) {
         ShowAlertDialog.showAlertDialog(context, "Erro: $e");
