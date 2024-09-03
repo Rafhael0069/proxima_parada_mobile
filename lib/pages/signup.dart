@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
+import 'package:proxima_parada_mobile/models/user_vehicler.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/signin.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
@@ -19,7 +22,7 @@ class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final MaskedTextController _phoneController = MaskedTextController(mask: '(00) 0 0000-0000');
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordController2 = TextEditingController();
@@ -95,20 +98,21 @@ class _SignupState extends State<Signup> {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
       LocalUser localUser =
-          LocalUser(_nameController.text, _phoneMask.getUnmaskedText(), _emailController.text);
+      LocalUser(_nameController.text, _phoneMask.getUnmaskedText(), _emailController.text, UserVehicle.empty());
+      print("TesteFone: ${localUser.phoneNumber}");
       final user = await _fbServices.createUserWithEmailAndPassword(
           localUser, _passwordController.text, context);
       if (user != null) {
         if (_pickedImage != null) {
           final urlImage = await _fbServices.uploadImage(localUser, _pickedImage!.path);
-          localUser.locationImage = urlImage.toString();
+          localUser.imageLocation = urlImage.toString();
           await _fbServices.saveUserData(localUser, context);
-          _directToHome();
           setState(() => _loading = false);
+          _directToHome();
         } else {
           await _fbServices.saveUserData(localUser, context);
-          _directToHome();
           setState(() => _loading = false);
+          _directToHome();
         }
       } else {
         setState(() => _loading = false);
@@ -188,7 +192,7 @@ class _SignupState extends State<Signup> {
                                     controller: _phoneController,
                                     textInputAction: TextInputAction.next,
                                     keyboardType: TextInputType.number,
-                                    inputFormatters: [_phoneMask],
+                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     decoration: const InputDecoration(labelText: 'Telefone'),
                                     validator: Validator.phone,
                                   ),

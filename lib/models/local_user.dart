@@ -1,11 +1,14 @@
+import 'package:proxima_parada_mobile/models/user_vehicler.dart';
+
 class LocalUser {
   String? idUser;
   String? name;
   String? phoneNumber;
-  String? locationImage;
+  String? imageLocation;
   String? email;
+  UserVehicle? userVehicle;
 
-  LocalUser(this.name, this.phoneNumber, this.email, [this.idUser, this.locationImage]);
+  LocalUser(this.name, this.phoneNumber, this.email, this.userVehicle, [this.idUser, this.imageLocation]);
 
   LocalUser.empty();
 
@@ -13,8 +16,9 @@ class LocalUser {
     idUser = doc["idUser"];
     name = doc["name"];
     phoneNumber = doc["phone"];
-    locationImage = doc["locationImage"];
+    imageLocation = doc["imageLocation"];
     email = doc["email"];
+    userVehicle = UserVehicle.fromMap(doc["userVehicle"]);
   }
 
   Map<String, dynamic> toMap() {
@@ -22,13 +26,14 @@ class LocalUser {
       "idUser": idUser,
       "name": name,
       "phone": phoneNumber,
-      "locationImage": locationImage,
+      "imageLocation": imageLocation,
       "email": email,
+      "userVehicle": userVehicle?.toMap(),
     };
     return map;
   }
 
   set setLocationImage(String value) {
-    locationImage = value;
+    imageLocation = value;
   }
 }

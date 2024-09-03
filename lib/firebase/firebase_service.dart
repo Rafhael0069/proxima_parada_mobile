@@ -38,8 +38,7 @@ class FirebaseService {
     }
   }
 
-  Future<Object?> createUserWithEmailAndPassword(
-      LocalUser localUser, String password, context) async {
+  Future<Object?> createUserWithEmailAndPassword(LocalUser localUser, String password, context) async {
     try {
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(email: localUser.email!, password: password);
@@ -152,8 +151,7 @@ class FirebaseService {
     }
   }
 
-  Future<void> savePublicationData(Publication publication, BuildContext context,
-      {var atualization}) async {
+  Future<void> savePublicationData(Publication publication, BuildContext context, {var atualization}) async {
     if (atualization == null) {
       try {
         DocumentReference docRef =

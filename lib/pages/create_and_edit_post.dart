@@ -204,7 +204,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
       localUser!.idUser,
       localUser!.name,
       localUser!.phoneNumber,
-      localUser!.locationImage,
+      localUser!.imageLocation,
       _originCityController.text,
       _originNeighborhoodController.text,
       _originStreetController.text,

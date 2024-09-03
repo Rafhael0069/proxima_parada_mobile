@@ -96,9 +96,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _nameController.text = localUser.name!;
           _phoneController.text = localUser.phoneNumber!;
           _emailController.text = localUser.email!;
-          if (localUser.locationImage != null) {
-            print('ImageUser: ${localUser.locationImage!}');
-            _imageUserStandard = localUser.locationImage!;
+          if (localUser.imageLocation != null) {
+            print('ImageUser: ${localUser.imageLocation!}');
+            _imageUserStandard = localUser.imageLocation!;
           }
         });
       }
@@ -112,7 +112,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() => _loading = true);
       if (_pickedImage != null) {
         final urlImage = await _fbServices.uploadImage(localUser, _pickedImage!.path);
-        localUser.locationImage = urlImage;
+        localUser.imageLocation = urlImage;
         _saveChanges();
         setState(() => _loading = false);
       } else {
