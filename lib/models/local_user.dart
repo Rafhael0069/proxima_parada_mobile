@@ -10,8 +10,8 @@ class LocalUser {
   bool isRequestBeDriveOpen = false;
   bool isRequestDenied = false;
   UserVehicle? userVehicle;
-  // DateTime createdAt = DateTime.now();
-  // DateTime updatedAt = DateTime.now();
+  // Timestamp? createdAt;
+  // Timestamp? updatedAt;
 
   LocalUser(this.name, this.phoneNumber, this.email, this.userVehicle,
       [this.idUser, this.imageLocation]);

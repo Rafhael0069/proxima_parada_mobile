@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
+import 'package:proxima_parada_mobile/models/request_be_drive.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 
 class FirebaseService {
@@ -101,6 +102,8 @@ class FirebaseService {
 
   Future<void> saveUserData(LocalUser localUser, BuildContext context) async {
     try {
+      // localUser.createdAt = FieldValue.serverTimestamp() as Timestamp?;
+      // localUser.updatedAt = FieldValue.serverTimestamp() as Timestamp?;
       await _dbInstance
           .collection('users')
           .doc(localUser.idUser)
@@ -112,7 +115,7 @@ class FirebaseService {
 
   Future<void> updateUserData(String userId, LocalUser localUser, BuildContext context) async {
     try {
-      // localUser.updatedAt = DateTime.now();
+      // localUser.updatedAt = FieldValue.serverTimestamp() as Timestamp?;
       await _dbInstance
           .collection('users')
           .doc(userId)
@@ -226,6 +229,17 @@ class FirebaseService {
         print('Erro ao obter as publicações: $e');
         return null;
       }
+    }
+  }
+
+  Future<void> saveRequestBeDrive(RequestBeDrive requisition, BuildContext context) async {
+    try {
+      await _dbInstance
+          .collection('requisitions')
+          .doc(requisition.idRequest)
+          .set(requisition.toMap());
+    } catch (e) {
+      ShowAlertDialog.showAlertDialog(context, "Erro: $e");
     }
   }
 }

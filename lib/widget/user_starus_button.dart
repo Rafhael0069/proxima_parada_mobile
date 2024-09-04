@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UserStatusButton extends StatelessWidget {
+  final bool loading;
   final bool isDriver;
   final bool isRequestBeDriveOpen;
   final bool isRequestDenied;
@@ -8,6 +9,7 @@ class UserStatusButton extends StatelessWidget {
 
   const UserStatusButton({
     super.key,
+    required this.loading,
     required this.isDriver,
     required this.isRequestBeDriveOpen,
     required this.isRequestDenied,
@@ -50,7 +52,11 @@ class UserStatusButton extends StatelessWidget {
           minimumSize: const Size.fromHeight(45),
         ),
         onPressed: onRequestBeDrive,
-        child: const Text(
+        child: loading
+            ? const CircularProgressIndicator(
+          color: Colors.blue,
+        )
+            : const Text(
           'Quero oferecer caronas',
           style: TextStyle(fontSize: 20),
         ),

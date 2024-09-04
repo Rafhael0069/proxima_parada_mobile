@@ -6,14 +6,14 @@ class RequestBeDrive {
   LocalUser? localUser;
   bool statusRequest = false;
   bool readeRequest = false;
-  String? statusDescriptionDenied;
-  // DateTime createdAt = DateTime.now();
-  // DateTime updatedAt = DateTime.now();
+  bool statusDescriptionDenied = false;
+  // Timestamp? createdAt;
+  // Timestamp? updatedAt;
 
   RequestBeDrive(this.localUser);
 
   RequestBeDrive.fromMap(Map<String, dynamic> doc) {
-    idRequest = doc["idRequisition"];
+    idRequest = doc["idRequest"];
     localUser = LocalUser.fromMap(doc["localUser"]);
     statusRequest = doc["statusRequest"];
     readeRequest = doc["readeRequest"];

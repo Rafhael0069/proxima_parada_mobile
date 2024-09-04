@@ -3,31 +3,53 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
+import 'package:proxima_parada_mobile/models/request_be_drive.dart';
 import 'package:proxima_parada_mobile/pages/create_and_edit_vehicle.dart';
 import 'package:proxima_parada_mobile/pages/edit_profile_page.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 import 'package:proxima_parada_mobile/widget/content_box.dart';
 import 'package:proxima_parada_mobile/widget/user_starus_button.dart';
 
-class ProfilePage extends StatelessWidget {
-  final String userId;
+class ProfilePage extends StatefulWidget {
+  final String idUser;
 
-  ProfilePage({super.key, required this.userId});
+  const ProfilePage({super.key, required this.idUser});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final _phoneMask = MaskTextInputFormatter(
       mask: '(##) # ####-####',
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
+  bool _loading = false;
+  final FirebaseService _fbServices = FirebaseService();
 
-  void resquestBeDrive(BuildContext context) {
+  Future<void> requestBeDrive(LocalUser userDate, BuildContext context) async {
+    setState(() {
+      _loading = true;
+    });
+
+    userDate.isRequestBeDriveOpen = true;
+    await _fbServices.updateUserData(widget.idUser, userDate, context);
+
+    RequestBeDrive requestBeDrive = RequestBeDrive(userDate);
+    await _fbServices.saveRequestBeDrive(requestBeDrive, context);
+
+    setState(() {
+      _loading = false;
+    });
+
     ShowAlertDialog.showAlertDialog(
-        context, "Desculpe, ainda não implementado :(");
+        context, "Sua solicitação foi emcaminhada.");
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseService.getUserStream(userId, context),
+      stream: FirebaseService.getUserStream(widget.idUser, context),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -164,8 +186,8 @@ class ProfilePage extends StatelessWidget {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              EditProfilePage(userId: userId)));
+                                          builder: (context) => EditProfilePage(
+                                              userId: widget.idUser)));
                                 },
                                 child: const Text('Editar Perfil',
                                     style: TextStyle(
@@ -323,8 +345,7 @@ class ProfilePage extends StatelessWidget {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               CreateAndEditVehicle(
-                                                  userId: userId)));
-                                  // ShowAlertDialog.showAlertDialog(context, "Desculpe, ainda não implementado :(");
+                                                  userId: widget.idUser)));
                                 },
                                 child: Text(
                                     userData.userVehicle?.plate != null
@@ -342,10 +363,12 @@ class ProfilePage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             vertical: 12, horizontal: 10),
                         child: UserStatusButton(
+                          loading: _loading,
                           isDriver: userData.isDriver,
                           isRequestBeDriveOpen: userData.isRequestBeDriveOpen,
                           isRequestDenied: userData.isRequestDenied,
-                          onRequestBeDrive: () => resquestBeDrive(context),
+                          onRequestBeDrive: () =>
+                              requestBeDrive(userData, context),
                         ),
                       )
                   ],

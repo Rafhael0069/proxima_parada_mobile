@@ -256,7 +256,7 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
                               minimumSize: const Size.fromHeight(45)),
                           child: _loading
                               ? const CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: Colors.blue,
                                 )
                               : Text(
                                   userVehicle.plate != null

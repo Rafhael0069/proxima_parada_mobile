@@ -231,7 +231,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
                             child: _loading
                                 ? const CircularProgressIndicator(
-                                    color: Colors.white,
+                                    color: Colors.blue,
                                   )
                                 : const Text(
                                     'Salvar Alterações',

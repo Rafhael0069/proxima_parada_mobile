@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
+import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/pages/welcome.dart';
 import 'package:proxima_parada_mobile/screens/feed_page.dart';
 import 'package:proxima_parada_mobile/screens/my_rides_page.dart';
@@ -15,11 +18,29 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  final bool _isRideVisible = true;
-
-  // final FirebaseService _fbServices = FirebaseService();
+  final FirebaseService _fbServices = FirebaseService();
+  bool _isRideVisible = false;
+  late LocalUser localUser;
 
   var currentUser = FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    _loadUserData();
+    super.initState();
+  }
+  void _loadUserData() async {
+    try {
+      DocumentSnapshot? userData = await _fbServices.getUserData(currentUser!.uid, context);
+      if (userData != null && userData.exists) {
+        localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
+        setState(() {
+          _isRideVisible = localUser.isDriver;
+        });
+      }
+    } catch (e) {
+      print('Erro ao carregar os dados do usuário: $e');
+    }
+  }
 
   // var currentUser =  _fbServices.getCurrentUser();
 
@@ -30,13 +51,13 @@ class _HomeState extends State<Home> {
             idUser: currentUser!.uid,
           ),
           ProfilePage(
-            userId: currentUser!.uid,
+            idUser: currentUser!.uid,
           ),
         ]
       : <Widget>[
           FeedPage(),
           ProfilePage(
-            userId: currentUser!.uid,
+            idUser: currentUser!.uid,
           ),
         ];
 
