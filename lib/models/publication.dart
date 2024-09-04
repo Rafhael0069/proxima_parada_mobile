@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class Publication {
   String? idUser;
-  String? idPublication;
+  String idPublication = const Uuid().v6();
   String? userName;
   String? userPhoneNumber;
   String? userLocationImage;
@@ -19,7 +20,7 @@ class Publication {
   bool? statusPublication;
   bool? vacancies;
   String? registrationDate;
-  String? atualizationDate;
+  String? updatedDate;
 
   Publication(
       this.idUser,
@@ -39,8 +40,7 @@ class Publication {
       this.statusPublication,
       this.vacancies,
       {this.registrationDate,
-      this.atualizationDate,
-      this.idPublication});
+      this.updatedDate});
 
   Publication.fromMap(QueryDocumentSnapshot doc) {
     idUser = doc["idUser"];
@@ -61,7 +61,7 @@ class Publication {
     statusPublication = doc["statusPublication"];
     vacancies = doc["vacancies"];
     registrationDate = doc["registrationDate"];
-    atualizationDate = doc["atualizationDate"];
+    updatedDate = doc["updatedDate"];
   }
 
   Publication.fromDocumentSnapshot(DocumentSnapshot doc) {
@@ -83,7 +83,7 @@ class Publication {
     statusPublication = doc["statusPublication"];
     vacancies = doc["vacancies"];
     registrationDate = doc["registrationDate"];
-    atualizationDate = doc["atualizationDate"];
+    updatedDate = doc["updatedDate"];
   }
 
   Map<String, dynamic> toMap() {
@@ -105,7 +105,7 @@ class Publication {
       "statusPublication": statusPublication,
       "vacancies": vacancies,
       "registrationDate": registrationDate,
-      "atualizationDate": atualizationDate,
+      "updatedDate": updatedDate,
     };
     return map;
   }

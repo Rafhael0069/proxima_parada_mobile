@@ -29,7 +29,7 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
 
   bool _loading = false;
   String _imageUserStandard =
-      'https://firebasestorage.googleapis.com/v0/b/proxima-parada-001.appspot.com/o/images%2Fusers%2Fuser_avatar.png?alt=media&token=2974efa6-3ead-462d-b0a7-0b76b2eb70e4';
+      'https://firebasestorage.googleapis.com/v0/b/proxima-parada-001.appspot.com/o/images%2Fselect-image-icon.jpg?alt=media&token=46e45aee-da26-4d75-9530-87bbe4c5a78d';
 
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;

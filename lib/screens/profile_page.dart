@@ -7,6 +7,7 @@ import 'package:proxima_parada_mobile/pages/create_and_edit_vehicle.dart';
 import 'package:proxima_parada_mobile/pages/edit_profile_page.dart';
 import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
 import 'package:proxima_parada_mobile/widget/content_box.dart';
+import 'package:proxima_parada_mobile/widget/user_starus_button.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userId;
@@ -17,6 +18,11 @@ class ProfilePage extends StatelessWidget {
       mask: '(##) # ####-####',
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
+
+  void resquestBeDrive(BuildContext context) {
+    ShowAlertDialog.showAlertDialog(
+        context, "Desculpe, ainda não implementado :(");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +155,8 @@ class ProfilePage extends StatelessWidget {
                               ],
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(45)),
@@ -168,7 +175,9 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ],
                         )),
-                    const SizedBox(height: 6,),
+                    const SizedBox(
+                      height: 6,
+                    ),
                     ContentBox(
                         title: "Informações do veículo",
                         child: Column(
@@ -196,13 +205,13 @@ class ProfilePage extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text("Modelo",
+                                          const Text("Marca",
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               )),
                                           Text(
-                                            userData.userVehicle!.model!,
+                                            userData.userVehicle!.brand!,
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
@@ -225,13 +234,13 @@ class ProfilePage extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text("Marca",
+                                          const Text("Modelo",
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               )),
                                           Text(
-                                            userData.userVehicle!.brand!,
+                                            userData.userVehicle!.model!,
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
@@ -303,7 +312,8 @@ class ProfilePage extends StatelessWidget {
                                 ],
                               ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(45)),
@@ -316,7 +326,10 @@ class ProfilePage extends StatelessWidget {
                                                   userId: userId)));
                                   // ShowAlertDialog.showAlertDialog(context, "Desculpe, ainda não implementado :(");
                                 },
-                                child: Text(userData.userVehicle?.plate != null ? 'Editar veiculo' : 'Adicionar veículo',
+                                child: Text(
+                                    userData.userVehicle?.plate != null
+                                        ? 'Editar veiculo'
+                                        : 'Adicionar veículo',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     )),
@@ -326,20 +339,15 @@ class ProfilePage extends StatelessWidget {
                         )),
                     if (userData.userVehicle?.plate != null)
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(45)),
-                          onPressed: () {
-                            ShowAlertDialog.showAlertDialog(
-                                context, "Desculpe, ainda não implementado :(");
-                          },
-                          child: const Text('Quero oferecer caronas',
-                              style: TextStyle(
-                                fontSize: 20,
-                              )),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 10),
+                        child: UserStatusButton(
+                          isDriver: userData.isDriver,
+                          isRequestBeDriveOpen: userData.isRequestBeDriveOpen,
+                          isRequestDenied: userData.isRequestDenied,
+                          onRequestBeDrive: () => resquestBeDrive(context),
                         ),
-                      ),
+                      )
                   ],
                 ),
               ),

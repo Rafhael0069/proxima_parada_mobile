@@ -6,9 +6,15 @@ class LocalUser {
   String? phoneNumber;
   String? imageLocation;
   String? email;
+  bool isDriver = false;
+  bool isRequestBeDriveOpen = false;
+  bool isRequestDenied = false;
   UserVehicle? userVehicle;
+  // DateTime createdAt = DateTime.now();
+  // DateTime updatedAt = DateTime.now();
 
-  LocalUser(this.name, this.phoneNumber, this.email, this.userVehicle, [this.idUser, this.imageLocation]);
+  LocalUser(this.name, this.phoneNumber, this.email, this.userVehicle,
+      [this.idUser, this.imageLocation]);
 
   LocalUser.empty();
 
@@ -18,7 +24,12 @@ class LocalUser {
     phoneNumber = doc["phone"];
     imageLocation = doc["imageLocation"];
     email = doc["email"];
+    isDriver = doc["isDriver"];
+    isRequestBeDriveOpen = doc["isRequestBeDriveOpen"];
+    isRequestDenied = doc["isRequestDenied"];
     userVehicle = UserVehicle.fromMap(doc["userVehicle"]);
+    // createdAt = doc["createdAt"];
+    // updatedAt = doc["updatedAt"];
   }
 
   Map<String, dynamic> toMap() {
@@ -28,7 +39,12 @@ class LocalUser {
       "phone": phoneNumber,
       "imageLocation": imageLocation,
       "email": email,
+      "isDriver": isDriver,
+      "isRequestBeDriveOpen": isRequestBeDriveOpen,
+      "isRequestDenied": isRequestDenied,
       "userVehicle": userVehicle?.toMap(),
+      // "createdAt": createdAt,
+      // "updatedAt": updatedAt,
     };
     return map;
   }

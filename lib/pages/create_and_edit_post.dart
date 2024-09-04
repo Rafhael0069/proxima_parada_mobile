@@ -217,7 +217,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
       _departureTimeController.text,
       true,
       true,
-      atualizationDate: DateTime.now().toString(),
+      updatedDate: DateTime.now().toString(),
     );
     if (!newPublication) {
       publication.registrationDate = publicationData.registrationDate;
@@ -228,7 +228,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
     try {
       if (!newPublication) {
         await _fbServices.savePublicationData(publication, context,
-            atualization: publication.toMap());
+            update: publication.toMap());
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Carona atualizada com sucesso!'),
         ));

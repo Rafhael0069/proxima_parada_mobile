@@ -101,7 +101,7 @@ class PublicationCard extends StatelessWidget {
 
   _updatePublication(Publication publication, BuildContext context, var atualization) async {
     try {
-      await _fbServices.savePublicationData(publication, context, atualization: atualization);
+      await _fbServices.savePublicationData(publication, context, update: atualization);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Carona atualizada com sucesso!'),
       ));

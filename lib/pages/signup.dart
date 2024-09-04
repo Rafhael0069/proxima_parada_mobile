@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/models/user_vehicler.dart';
@@ -32,8 +31,7 @@ class _SignupState extends State<Signup> {
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
 
-  var _phoneMask = MaskTextInputFormatter(
-      mask: '(##) # ####-####', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
+  // var _phoneMask = MaskTextInputFormatter(mask: '(##) # ####-####', filter: {"#": RegExp(r'[0-9]')}, type: MaskAutoCompletionType.lazy);
 
   bool _passwordVisible = false;
   bool _passwordVisible2 = false;
@@ -98,7 +96,7 @@ class _SignupState extends State<Signup> {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
       LocalUser localUser =
-      LocalUser(_nameController.text, _phoneMask.getUnmaskedText(), _emailController.text, UserVehicle.empty());
+      LocalUser(_nameController.text, _phoneController.text.replaceAll(RegExp(r'[^\d]'), ''), _emailController.text, UserVehicle.empty());
       print("TesteFone: ${localUser.phoneNumber}");
       final user = await _fbServices.createUserWithEmailAndPassword(
           localUser, _passwordController.text, context);

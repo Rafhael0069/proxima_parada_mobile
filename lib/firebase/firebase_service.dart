@@ -17,8 +17,7 @@ class FirebaseService {
     return FirebaseAuth.instance.currentUser;
   }
 
-  Future<User?> signInWithEmailAndPassword(
-      String email, String password, context) async {
+  Future<User?> signInWithEmailAndPassword(String email, String password, context) async {
     try {
       final UserCredential userCredential = await _auth
           .signInWithEmailAndPassword(email: email, password: password);
@@ -39,8 +38,7 @@ class FirebaseService {
     }
   }
 
-  Future<Object?> createUserWithEmailAndPassword(
-      LocalUser localUser, String password, context) async {
+  Future<Object?> createUserWithEmailAndPassword(LocalUser localUser, String password, context) async {
     try {
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -112,8 +110,20 @@ class FirebaseService {
     }
   }
 
-  Future<String?> uploadImage(LocalUser localUser, String pickedImage,
-      {bool? isCar}) async {
+  Future<void> updateUserData(String userId, LocalUser localUser, BuildContext context) async {
+    try {
+      // localUser.updatedAt = DateTime.now();
+      await _dbInstance
+          .collection('users')
+          .doc(userId)
+          .update(localUser.toMap());
+    } catch (e) {
+      ShowAlertDialog.showAlertDialog(
+          context, 'Erro ao atualizar os dados do usuário: $e');
+    }
+  }
+
+  Future<String?> uploadImage(LocalUser localUser, String pickedImage, {bool? isCar}) async {
     try {
       String fileName;
       Reference fileRef;
@@ -140,8 +150,7 @@ class FirebaseService {
     }
   }
 
-  Future<DocumentSnapshot?> getUserData(
-      String userId, BuildContext context) async {
+  Future<DocumentSnapshot?> getUserData(String userId, BuildContext context) async {
     try {
       DocumentSnapshot documentSnapshot =
           await _dbInstance.collection('users').doc(userId).get();
@@ -153,8 +162,7 @@ class FirebaseService {
     }
   }
 
-  static Stream<DocumentSnapshot>? getUserStream(
-      String userId, BuildContext context) {
+  static Stream<DocumentSnapshot>? getUserStream(String userId, BuildContext context) {
     try {
       Stream<DocumentSnapshot> documentSnapshot = FirebaseFirestore.instance
           .collection('users')
@@ -168,23 +176,8 @@ class FirebaseService {
     }
   }
 
-  Future<void> updateUserData(
-      String userId, LocalUser localUser, BuildContext context) async {
-    try {
-      await _dbInstance
-          .collection('users')
-          .doc(userId)
-          .update(localUser.toMap());
-    } catch (e) {
-      ShowAlertDialog.showAlertDialog(
-          context, 'Erro ao atualizar os dados do usuário: $e');
-    }
-  }
-
-  Future<void> savePublicationData(
-      Publication publication, BuildContext context,
-      {var atualization}) async {
-    if (atualization == null) {
+  Future<void> savePublicationData(Publication publication, BuildContext context, {var update}) async {
+    if (update == null) {
       try {
         DocumentReference docRef = await _dbInstance
             .collection('publications')
@@ -198,7 +191,7 @@ class FirebaseService {
         await _dbInstance
             .collection("publications")
             .doc(publication.idPublication)
-            .update(atualization);
+            .update(update);
       } catch (e) {
         ShowAlertDialog.showAlertDialog(context, "Erro: $e");
       }
