@@ -13,16 +13,33 @@ class Signin extends StatefulWidget {
 
 class _SigninState extends State<Signin> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final FirebaseService _fbServices = FirebaseService();
   bool _passwordVisible = false;
   bool _loading = false;
 
   @override
   void initState() {
-    _controllerEmail.text = "teste1@gmail.com";
-    _controllerPassword.text = "1234abcd";
+
+    // _emailController.text = "teste1@gmail.com";
+    // _passwordController.text = "1234abcd";
+
+    // _emailController.text = "joao.silva@example.com";
+    // _passwordController.text = "senha123";
+
+    _emailController.text = "maria.santos@example.com";
+    _passwordController.text = "segredo123";
+
+    // _emailController.text = "pedro.souza@example.com";
+    // _passwordController.text = "pedro123456";
+
+    // _emailController.text = "ana.oliveira@example.com";
+    // _passwordController.text = "senhaforte123";
+
+    // _emailController.text = "carlos.pereira@example.com";
+    // _passwordController.text = "abcdefg123";
+
     super.initState();
   }
 
@@ -30,7 +47,7 @@ class _SigninState extends State<Signin> {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
       final user = await _fbServices.signInWithEmailAndPassword(
-          _controllerEmail.text, _controllerPassword.text, context);
+          _emailController.text, _passwordController.text, context);
       if (user != null) {
         _directToHome();
         setState(() => _loading = false);
@@ -51,10 +68,10 @@ class _SigninState extends State<Signin> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
+    DateTime timeBackPressed = DateTime.now();
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async => true,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
@@ -86,7 +103,7 @@ class _SigninState extends State<Signin> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 6),
                                 child: TextFormField(
-                                  controller: _controllerEmail,
+                                  controller: _emailController,
                                   textInputAction: TextInputAction.next,
                                   decoration: const InputDecoration(labelText: 'Email'),
                                   keyboardType: TextInputType.emailAddress,
@@ -100,7 +117,7 @@ class _SigninState extends State<Signin> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 6),
                                 child: TextFormField(
-                                  controller: _controllerPassword,
+                                  controller: _passwordController,
                                   keyboardType: TextInputType.text,
                                   obscureText: !_passwordVisible,
                                   decoration: InputDecoration(

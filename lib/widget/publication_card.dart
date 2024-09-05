@@ -49,7 +49,7 @@ class PublicationCard extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 4),
                           child: OutlinedButton(
                             onPressed: () async {
-                              var atualization;
+                              Map<String, Object> atualization;
                               if (type == "V") {
                                 if (publication.vacancies!) {
                                   atualization = {

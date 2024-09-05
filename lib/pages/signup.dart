@@ -44,6 +44,36 @@ class _SignupState extends State<Signup> {
     _emailController.text = "teste1@gmail.com";
     _passwordController.text = "1234abcd";
     _passwordController2.text = "1234abcd";
+
+    // _nameController.text = "João Silva";
+    // _phoneController.text = "(11) 98765-4321";
+    // _emailController.text = "joao.silva@example.com";
+    // _passwordController.text = "senha123";
+    // _passwordController2.text = "senha123";
+
+    // _nameController.text = "Maria Santos";
+    // _phoneController.text = "(21) 9 1234-5678";
+    // _emailController.text = "maria.santos@example.com";
+    // _passwordController.text = "segredo123";
+    // _passwordController2.text = "segredo123";
+
+    // _nameController.text = "Pedro Souza";
+    // _phoneController.text = "(31) 9 9876-5432";
+    // _emailController.text = "pedro.souza@example.com";
+    // _passwordController.text = "pedro123456";
+    // _passwordController2.text = "pedro123456";
+
+    // _nameController.text = "Ana Oliveira";
+    // _phoneController.text = "(41) 9 1234-5678";
+    // _emailController.text = "ana.oliveira@example.com";
+    // _passwordController.text = "senhaforte123";
+    // _passwordController2.text = "senhaforte123";
+
+    // _nameController.text = "Carlos Pereira";
+    // _phoneController.text = "(51) 9 8765-4321";
+    // _emailController.text = "carlos.pereira@example.com";
+    // _passwordController.text = "abcdefg123";
+    // _passwordController2.text = "abcdefg123";
     super.initState();
   }
 
@@ -128,10 +158,9 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async => true,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(

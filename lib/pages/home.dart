@@ -20,33 +20,11 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   final FirebaseService _fbServices = FirebaseService();
   bool _isRideVisible = false;
-  late LocalUser localUser;
-
-  var currentUser = FirebaseAuth.instance.currentUser;
-  @override
-  void initState() {
-    _loadUserData();
-    super.initState();
-  }
-  void _loadUserData() async {
-    try {
-      DocumentSnapshot? userData = await _fbServices.getUserData(currentUser!.uid, context);
-      if (userData != null && userData.exists) {
-        localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
-        setState(() {
-          _isRideVisible = localUser.isDriver;
-        });
-      }
-    } catch (e) {
-      print('Erro ao carregar os dados do usuário: $e');
-    }
-  }
-
-  // var currentUser =  _fbServices.getCurrentUser();
-
-  late final List<Widget> _screens = _isRideVisible
+  late List<Widget> _screens = _isRideVisible
       ? <Widget>[
-          FeedPage(),
+          FeedPage(
+            idUser: currentUser!.uid,
+          ),
           MyRidesPage(
             idUser: currentUser!.uid,
           ),
@@ -55,11 +33,59 @@ class _HomeState extends State<Home> {
           ),
         ]
       : <Widget>[
-          FeedPage(),
+          FeedPage(
+            idUser: currentUser!.uid,
+          ),
           ProfilePage(
             idUser: currentUser!.uid,
           ),
         ];
+
+  late LocalUser localUser;
+  var currentUser = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    _loadUserData();
+    super.initState();
+  }
+
+  void _loadUserData() async {
+    try {
+      DocumentSnapshot? userData =
+          await _fbServices.getUserData(currentUser!.uid, context);
+      if (userData != null && userData.exists) {
+        localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
+        setState(() {
+          _isRideVisible = localUser.isDriver;
+          _screens = _isRideVisible
+              ? <Widget>[
+                  FeedPage(
+                    idUser: currentUser!.uid,
+                  ),
+                  MyRidesPage(
+                    idUser: currentUser!.uid,
+                  ),
+                  ProfilePage(
+                    idUser: currentUser!.uid,
+                  ),
+                ]
+              : <Widget>[
+                  FeedPage(
+                    idUser: currentUser!.uid,
+                  ),
+                  ProfilePage(
+                    idUser: currentUser!.uid,
+                  ),
+                ];
+        });
+      }
+    } catch (e) {
+      print('Erro ao carregar os dados do usuário: $e');
+    }
+  }
+
+  // var currentUser =  _fbServices.getCurrentUser();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -76,7 +102,8 @@ class _HomeState extends State<Home> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'settings') {
-                ShowAlertDialog.showAlertDialog(context, "Ainda não implementado :(");
+                ShowAlertDialog.showAlertDialog(
+                    context, "Ainda não implementado :(");
               } else if (value == 'logout') {
                 FirebaseAuth auth = FirebaseAuth.instance;
                 auth.signOut();
@@ -114,8 +141,10 @@ class _HomeState extends State<Home> {
         items: [
           const BottomNavigationBarItem(icon: Icon(Icons.feed), label: "feed"),
           if (_isRideVisible)
-            const BottomNavigationBarItem(icon: Icon(Icons.post_add), label: "minhas caronas"),
-          const BottomNavigationBarItem(icon: Icon(Icons.person), label: "perfil"),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.post_add), label: "minhas caronas"),
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: "perfil"),
         ],
       ),
     );

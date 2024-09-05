@@ -6,7 +6,8 @@ import 'package:proxima_parada_mobile/widget/loading_widget.dart';
 import 'package:proxima_parada_mobile/widget/publication_card.dart';
 
 class FeedPage extends StatelessWidget {
-  FeedPage({Key? key}) : super(key: key);
+  final String idUser;
+  FeedPage({Key? key, required this.idUser}) : super(key: key);
 
   final FirebaseService _fbServices = FirebaseService();
 

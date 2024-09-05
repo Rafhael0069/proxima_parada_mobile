@@ -39,6 +39,32 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
 
   @override
   void initState() {
+
+    // _brandController.text = "Volkswagen";
+    // _modelController.text = "Gol";
+    // _colorController.text = "Prata";
+    // _plateController.text = "ABC1234";
+
+    // _brandController.text = "Fiat";
+    // _modelController.text = "Uno";
+    // _colorController.text = "Vermelho";
+    // _plateController.text ="XYZ9876";
+
+    // _brandController.text = "Chevrolet";
+    // _modelController.text = "Onix";
+    // _colorController.text = "Branco";
+    // _plateController.text = "DEF5432";
+
+    // _brandController.text = "Ford";
+    // _modelController.text = "Ka";
+    // _colorController.text = "Preto";
+    // _plateController.text = "GHI8765";
+
+    // _brandController.text = "Hyundai";
+    // _modelController.text = "HB20";
+    // _colorController.text = "Azul";
+    // _plateController.text = "JKL4321";
+
     _loadUserData();
     super.initState();
   }
@@ -77,14 +103,14 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
   }
 
   Future _selectImage(bool camera) async {
-    XFile? imagemSelecionada;
+    XFile? selectedImage;
     if (camera) {
-      imagemSelecionada = await _picker.pickImage(source: ImageSource.camera);
+      selectedImage = await _picker.pickImage(source: ImageSource.camera);
     } else {
-      imagemSelecionada = await _picker.pickImage(source: ImageSource.gallery);
+      selectedImage = await _picker.pickImage(source: ImageSource.gallery);
     }
     setState(() {
-      _pickedImage = imagemSelecionada;
+      _pickedImage = selectedImage;
     });
   }
 

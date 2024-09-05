@@ -221,8 +221,8 @@ class FirebaseService {
             .collection("publications")
             .where("statusPublication", isEqualTo: true)
             .where("vacancies", isEqualTo: true)
-            .orderBy("departureDate")
-            .orderBy("departureTime")
+            .where("departureDateTime", isGreaterThanOrEqualTo: Timestamp.now())
+            .orderBy("departureDateTime")
             .snapshots();
         return stream;
       } catch (e) {

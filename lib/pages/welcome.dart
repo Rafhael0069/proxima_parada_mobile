@@ -12,16 +12,19 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
   final AssetImage _imageLogo = const AssetImage("assets/images/logo.png");
-
   @override
   Widget build(BuildContext context) {
     DateTime timeBackPressed = DateTime.now();
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
         final difference = DateTime.now().difference(timeBackPressed);
         final isExitWarning = difference >= const Duration(seconds: 2);
         timeBackPressed = DateTime.now();
-        return Exit().isExitToDoubleTouch(isExitWarning);
+        // Exit().isExitToDoubleTouch(isExitWarning);
+        if (!Exit().isExitToDoubleTouch(isExitWarning)) {
+          didPop; // Interrompe a ação de voltar no primeiro toque
+        }
       },
       child: Scaffold(
         body: Container(

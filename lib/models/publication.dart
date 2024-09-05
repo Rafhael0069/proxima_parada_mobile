@@ -17,6 +17,7 @@ class Publication {
   String? destinationNumber;
   String? departureDate;
   String? departureTime;
+  Timestamp? departureDateTime;
   bool? statusPublication;
   bool? vacancies;
   String? registrationDate;
@@ -37,6 +38,7 @@ class Publication {
       this.destinationNumber,
       this.departureDate,
       this.departureTime,
+      this.departureDateTime,
       this.statusPublication,
       this.vacancies,
       {this.registrationDate,
@@ -58,6 +60,7 @@ class Publication {
     destinationNumber = doc["destinationNumber"];
     departureDate = doc["departureDate"];
     departureTime = doc["departureTime"];
+    departureDateTime = doc["departureDateTime"];
     statusPublication = doc["statusPublication"];
     vacancies = doc["vacancies"];
     registrationDate = doc["registrationDate"];
@@ -80,6 +83,7 @@ class Publication {
     destinationNumber = doc["destinationNumber"];
     departureDate = doc["departureDate"];
     departureTime = doc["departureTime"];
+    departureDateTime = doc["departureDateTime"];
     statusPublication = doc["statusPublication"];
     vacancies = doc["vacancies"];
     registrationDate = doc["registrationDate"];
@@ -102,6 +106,7 @@ class Publication {
       "destinationNumber": destinationNumber,
       "departureDate": departureDate,
       "departureTime": departureTime,
+      "departureDateTime": departureDateTime,
       "statusPublication": statusPublication,
       "vacancies": vacancies,
       "registrationDate": registrationDate,

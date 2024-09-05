@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
@@ -9,7 +10,8 @@ class CreateAndEditPost extends StatefulWidget {
   final String idUser;
   final Publication? existentPublication;
 
-  const CreateAndEditPost({super.key, required this.idUser, this.existentPublication});
+  const CreateAndEditPost(
+      {super.key, required this.idUser, this.existentPublication});
 
   @override
   State<CreateAndEditPost> createState() => _CreateAndEditPostState();
@@ -17,15 +19,22 @@ class CreateAndEditPost extends StatefulWidget {
 
 class _CreateAndEditPostState extends State<CreateAndEditPost> {
   final TextEditingController _originCityController = TextEditingController();
-  final TextEditingController _originNeighborhoodController = TextEditingController();
+  final TextEditingController _originNeighborhoodController =
+      TextEditingController();
   final TextEditingController _originStreetController = TextEditingController();
   final TextEditingController _originNumberController = TextEditingController();
-  final TextEditingController _destinationCityController = TextEditingController();
-  final TextEditingController _destinationNeighborhoodController = TextEditingController();
-  final TextEditingController _destinationStreetController = TextEditingController();
-  final TextEditingController _destinationNumberController = TextEditingController();
-  final TextEditingController _departureDateController = TextEditingController();
-  final TextEditingController _departureTimeController = TextEditingController();
+  final TextEditingController _destinationCityController =
+      TextEditingController();
+  final TextEditingController _destinationNeighborhoodController =
+      TextEditingController();
+  final TextEditingController _destinationStreetController =
+      TextEditingController();
+  final TextEditingController _destinationNumberController =
+      TextEditingController();
+  final TextEditingController _departureDateController =
+      TextEditingController();
+  final TextEditingController _departureTimeController =
+      TextEditingController();
 
   LocalUser? localUser;
   final FirebaseService _fbServices = FirebaseService();
@@ -42,13 +51,13 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
       _originStreetController.text = publicationData.originStreet!;
       _originNumberController.text = publicationData.originNumber!;
       _destinationCityController.text = publicationData.destinationCity!;
-      _destinationNeighborhoodController.text = publicationData.destinationNeighborhood!;
+      _destinationNeighborhoodController.text =
+          publicationData.destinationNeighborhood!;
       _destinationStreetController.text = publicationData.destinationStreet!;
       _destinationNumberController.text = publicationData.destinationNumber!;
       _departureDateController.text = publicationData.departureDate!;
       _departureTimeController.text = publicationData.departureTime!;
-    }
-    else {
+    } else {
       var dadosExemplo = [
         {
           "originCity": "London",
@@ -59,8 +68,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Montmartre",
           "destinationStreet": "Rue de Rivoli",
           "destinationNumber": "20",
-          "departureDate": "2024-04-18",
-          "departureTime": "10:30 AM"
+          "departureDate": "05/09/2024",
+          "departureTime": "01:30 PM"
         },
         {
           "originCity": "Tokyo",
@@ -71,8 +80,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Gion",
           "destinationStreet": "Hanamikoji Dori",
           "destinationNumber": "15",
-          "departureDate": "2024-04-20",
-          "departureTime": "09:45 AM"
+          "departureDate": "05/09/2024",
+          "departureTime": "02:30 PM"
         },
         {
           "originCity": "Sydney",
@@ -83,8 +92,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Fitzroy",
           "destinationStreet": "Brunswick Street",
           "destinationNumber": "40",
-          "departureDate": "2024-04-22",
-          "departureTime": "11:00 AM"
+          "departureDate": "05/09/2024",
+          "departureTime": "02:00 PM"
         },
         {
           "originCity": "Rome",
@@ -95,8 +104,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "San Marco",
           "destinationStreet": "Piazza San Marco",
           "destinationNumber": "25",
-          "departureDate": "2024-04-25",
-          "departureTime": "12:15 PM"
+          "departureDate": "05/09/2024",
+          "departureTime": "03:30 PM"
         },
         {
           "originCity": "Berlin",
@@ -107,8 +116,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Schwabing",
           "destinationStreet": "Leopoldstraße",
           "destinationNumber": "80",
-          "departureDate": "2024-04-27",
-          "departureTime": "02:30 PM"
+          "departureDate": "05/09/2024",
+          "departureTime": "03:00 PM"
         },
         {
           "originCity": "Madrid",
@@ -119,8 +128,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Gothic Quarter",
           "destinationStreet": "La Rambla",
           "destinationNumber": "100",
-          "departureDate": "2024-04-30",
-          "departureTime": "03:45 PM"
+          "departureDate": "05/09/2024",
+          "departureTime": "04:30 PM"
         },
         {
           "originCity": "Toronto",
@@ -131,7 +140,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Gastown",
           "destinationStreet": "Water Street",
           "destinationNumber": "120",
-          "departureDate": "2024-05-02",
+          "departureDate": "05/09/2024",
           "departureTime": "04:00 PM"
         },
         {
@@ -143,7 +152,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Corniche",
           "destinationStreet": "Corniche Road",
           "destinationNumber": "140",
-          "departureDate": "2024-05-05",
+          "departureDate": "05/09/2024",
           "departureTime": "05:30 PM"
         },
         {
@@ -155,8 +164,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Haeundae",
           "destinationStreet": "Haeundae-ro",
           "destinationNumber": "160",
-          "departureDate": "2024-05-08",
-          "departureTime": "06:45 PM"
+          "departureDate": "05/09/2024",
+          "departureTime": "05:00 PM"
         },
         {
           "originCity": "Moscow",
@@ -167,19 +176,23 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
           "destinationNeighborhood": "Nevsky Prospekt",
           "destinationStreet": "Nevsky Avenue",
           "destinationNumber": "180",
-          "departureDate": "2024-05-10",
-          "departureTime": "07:00 PM"
+          "departureDate": "05/09/2024",
+          "departureTime": "06:30 PM"
         }
       ];
-      int index = 0;
+      int index = 5;
       _originCityController.text = dadosExemplo[index]["originCity"]!;
-      _originNeighborhoodController.text = dadosExemplo[index]["originNeighborhood"]!;
+      _originNeighborhoodController.text =
+          dadosExemplo[index]["originNeighborhood"]!;
       _originStreetController.text = dadosExemplo[index]["originStreet"]!;
       _originNumberController.text = dadosExemplo[index]["originNumber"]!;
       _destinationCityController.text = dadosExemplo[index]["destinationCity"]!;
-      _destinationNeighborhoodController.text = dadosExemplo[index]["destinationNeighborhood"]!;
-      _destinationStreetController.text = dadosExemplo[index]["destinationStreet"]!;
-      _destinationNumberController.text = dadosExemplo[index]["destinationNumber"]!;
+      _destinationNeighborhoodController.text =
+          dadosExemplo[index]["destinationNeighborhood"]!;
+      _destinationStreetController.text =
+          dadosExemplo[index]["destinationStreet"]!;
+      _destinationNumberController.text =
+          dadosExemplo[index]["destinationNumber"]!;
       _departureDateController.text = dadosExemplo[index]["departureDate"]!;
       _departureTimeController.text = dadosExemplo[index]["departureTime"]!;
     }
@@ -189,7 +202,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
 
   void _loadUserData() async {
     try {
-      DocumentSnapshot? userData = await _fbServices.getUserData(widget.idUser, context);
+      DocumentSnapshot? userData =
+          await _fbServices.getUserData(widget.idUser, context);
       if (userData != null && userData.exists) {
         // Map<String, dynamic> userDataMap = userData.data() as Map<String, dynamic>;
         localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
@@ -199,7 +213,29 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
     }
   }
 
+  Timestamp converterDataHoraParaTimestamp(
+      String dataString, String horaString) {
+    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
+    DateFormat timeFormat = DateFormat("hh:mm a");
+
+    DateTime data = dateFormat.parse(dataString);
+    DateTime hora = timeFormat.parse(horaString);
+
+    DateTime dataHoraCombinada = DateTime(
+      data.year,
+      data.month,
+      data.day,
+      hora.hour,
+      hora.minute,
+    );
+
+    return Timestamp.fromDate(dataHoraCombinada);
+  }
+
   _createPublication() async {
+    Timestamp timestamp = converterDataHoraParaTimestamp(
+        _departureDateController.text, _departureTimeController.text);
+
     Publication publication = Publication(
       localUser!.idUser,
       localUser!.name,
@@ -215,6 +251,7 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
       _destinationNumberController.text,
       _departureDateController.text,
       _departureTimeController.text,
+      timestamp,
       true,
       true,
       updatedDate: DateTime.now().toString(),
@@ -306,7 +343,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
                             firstDate: DateTime(1900),
                             lastDate: DateTime(2100));
                         _departureDateController.text =
-                            DateTimeFormater.formatDataTime(date.toString(), "D");
+                            DateTimeFormater.formatDataTime(
+                                date.toString(), "D");
                       },
                     ),
                   ),
@@ -320,14 +358,16 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
                         labelText: "Hora da partida",
                       ),
                       onTap: () async {
-                        TimeOfDay? time = TimeOfDay.fromDateTime(DateTime.now());
+                        TimeOfDay? time =
+                            TimeOfDay.fromDateTime(DateTime.now());
                         FocusScope.of(context).requestFocus(FocusNode());
                         time = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.fromDateTime(DateTime.now()),
                         );
                         final localizations = MaterialLocalizations.of(context);
-                        _departureTimeController.text = localizations.formatTimeOfDay(time!);
+                        _departureTimeController.text =
+                            localizations.formatTimeOfDay(time!);
                       },
                     ),
                   ),
@@ -365,7 +405,8 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
                 padding: const EdgeInsets.only(top: 16),
                 child: ElevatedButton(
                   onPressed: _createPublication,
-                  style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(45)),
                   child: const Text(
                     "Salvar",
                     style: TextStyle(
