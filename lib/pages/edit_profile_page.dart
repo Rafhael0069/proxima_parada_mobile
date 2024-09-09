@@ -1,13 +1,15 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
+import 'package:proxima_parada_mobile/services/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
+import 'package:proxima_parada_mobile/services/image_service.dart';
+import 'package:proxima_parada_mobile/utils/form_utils.dart';
 import 'package:proxima_parada_mobile/utils/validator.dart';
+import 'package:proxima_parada_mobile/widget/custom_text_form_field.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String userId;
@@ -20,16 +22,13 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _nameController = TextEditingController();
-  // final TextEditingController _phoneController = TextEditingController();
-  final MaskedTextController _phoneController = MaskedTextController(mask: '(00) 0 0000-0000');
+  final MaskedTextController _phoneController =
+      MaskedTextController(mask: '(00) 0 0000-0000');
   final TextEditingController _emailController = TextEditingController();
-  final FirebaseService _fbServices = FirebaseService();
+
   String _imageUserStandard =
       'https://firebasestorage.googleapis.com/v0/b/proxima-parada-001.appspot.com/o/images%2Fselect-image-icon.jpg?alt=media&token=46e45aee-da26-4d75-9530-87bbe4c5a78d';
-
-  final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
   bool _loading = false;
 
@@ -37,8 +36,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
-    _loadUserData();
     super.initState();
+    _loadUserData();
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -54,17 +53,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Câmera'),
-                onTap: () {
-                  _selectImage(true);
+                onTap: () async {
+                  _pickedImage =
+                      await ImageService.selectImage(fromCamera: true);
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo),
                 title: const Text('Galeria'),
-                onTap: () {
-                  _selectImage(false);
+                onTap: () async {
+                  _pickedImage =
+                      await ImageService.selectImage(fromCamera: false);
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
             ],
@@ -74,178 +77,144 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Future _selectImage(bool camera) async {
-    XFile? imagemSelecionada;
-    if (camera) {
-      imagemSelecionada = await _picker.pickImage(source: ImageSource.camera);
-    } else {
-      imagemSelecionada = await _picker.pickImage(source: ImageSource.gallery);
-    }
-    setState(() {
-      _pickedImage = imagemSelecionada;
-    });
-  }
-
   void _loadUserData() async {
     try {
-      DocumentSnapshot? userData = await _fbServices.getUserData(widget.userId, context);
+      DocumentSnapshot? userData =
+          await FirebaseService.getUserData(widget.userId, context);
       if (userData != null && userData.exists) {
-        // Map<String, dynamic> userDataMap = userData.data() as Map<String, dynamic>;
         localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
         setState(() {
-          _nameController.text = localUser.name!;
-          _phoneController.text = localUser.phoneNumber!;
-          _emailController.text = localUser.email!;
-          if (localUser.imageLocation != null) {
-            _imageUserStandard = localUser.imageLocation!;
-          }
+          _nameController.text = localUser.name ?? '';
+          _phoneController.text = localUser.phoneNumber ?? '';
+          _emailController.text = localUser.email ?? '';
+          _imageUserStandard = localUser.imageLocation ?? _imageUserStandard;
         });
       }
     } catch (e) {
-      print('Erro ao carregar os dados do usuário: $e');
+      showSnackBar(context, 'Erro ao carregar os dados do usuário: $e');
     }
   }
 
-  _submitForm(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _loading = true);
-      if (_pickedImage != null) {
-        final urlImage = await _fbServices.uploadImage(localUser, _pickedImage!.path);
-        localUser.imageLocation = urlImage;
-        _saveChanges();
-        setState(() => _loading = false);
-      } else {
-        _saveChanges();
-        setState(() => _loading = false);
-      }
-    } else {
+  Future<void> _submitForm(BuildContext context) async {
+    if (!validateForm(_formKey)) {
       setState(() => _loading = false);
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    try {
+      if (_pickedImage != null) {
+        final urlImage = await ImageService.uploadImage(
+            localUser.idUser!, _pickedImage!.path);
+        localUser.imageLocation = urlImage;
+      }
+      _saveChanges();
+    } catch (e) {
+      setState(() => _loading = false);
+      showSnackBar(
+          context, 'Erro ao salvar as alterações. Tente novamente mais tarde.');
     }
   }
 
   void _saveChanges() async {
-    try {
-      localUser.name = _nameController.text.trim();
-      localUser.phoneNumber = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
-      await _fbServices.updateUserData(widget.userId, localUser, context);
+    localUser
+      ..name = _nameController.text.trim()
+      ..phoneNumber = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
 
-      // Mostrar uma mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Informações atualizadas com sucesso!'),
-      ));
+    try {
+      await FirebaseService.updateUserData(widget.userId, localUser, context);
+      showSnackBar(context, 'Informações atualizadas com sucesso!');
+      Navigator.pop(context);
     } catch (e) {
-      // Mostrar uma mensagem de erro
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
-      ));
+      showSnackBar(
+          context, 'Erro ao salvar as alterações. Tente novamente mais tarde.');
     }
-    Navigator.pop(context);
+
+    setState(() => _loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Perfil'),
+        title: const Text(
+          'Editar Perfil',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        backgroundColor: Colors.blue,
       ),
-      body: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            height: mediaQuery.size.height,
-            padding: const EdgeInsets.all(16),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: GestureDetector(
-                        onTap: () => _showBottomSheet(context),
-                        child: _pickedImage == null
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(_imageUserStandard),
-                                backgroundColor: Colors.white,
-                                radius: 100,
-                              )
-                            : CircleAvatar(
-                                backgroundImage: Image.file(File(_pickedImage!.path)).image,
-                                backgroundColor: Colors.white,
-                                radius: 100,
-                              ),
-                      )),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: TextFormField(
-                              controller: _nameController,
-                              textInputAction: TextInputAction.next,
-                              decoration: const InputDecoration(labelText: 'Nome'),
-                              validator: Validator.name,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: TextFormField(
-                              controller: _phoneController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              decoration: const InputDecoration(labelText: 'Telefone'),
-                              validator: Validator.phone,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: TextFormField(
-                              readOnly: true,
-                              controller: _emailController,
-                              textInputAction: TextInputAction.next,
-                              decoration: const InputDecoration(labelText: 'Email'),
-                              keyboardType: TextInputType.emailAddress,
-                              validator: Validator.email,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: ElevatedButton(
-                            onPressed: () => _submitForm(context),
-                            style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                            child: _loading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.blue,
-                                  )
-                                : const Text(
-                                    'Salvar Alterações',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20, top: 40),
+                  child: GestureDetector(
+                    onTap: () => _showBottomSheet(context),
+                    child: CircleAvatar(
+                      backgroundImage: _pickedImage != null
+                          ? Image.file(File(_pickedImage!.path)).image
+                          : NetworkImage(_imageUserStandard),
+                      backgroundColor: Colors.white,
+                      radius: 150,
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+                const SizedBox(height: 50,),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      CustomTextFormField(
+                        controller: _nameController,
+                        labelText: 'Nome',
+                        validator: Validator.name,
+                      ),
+                      const SizedBox(height: 10),
+                      CustomTextFormField(
+                        controller: _phoneController,
+                        labelText: 'Telefone',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: Validator.phone,
+                      ),
+                      const SizedBox(height: 10),
+                      CustomTextFormField(
+                        controller: _emailController,
+                        labelText: 'Email',
+                        readOnly: true,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: Validator.email,
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => _submitForm(context),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(45),
+                          backgroundColor: Colors.blue,
+                          textStyle: const TextStyle(fontSize: 20),
+                        ),
+                        child: _loading
+                            ? const CircularProgressIndicator(
+                            color: Colors.white)
+                            : const Text(
+                          'Salvar Alterações',
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

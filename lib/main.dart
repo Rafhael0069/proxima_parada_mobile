@@ -1,10 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
+import 'package:proxima_parada_mobile/services/firebase_service.dart';
 import 'package:proxima_parada_mobile/pages/home.dart';
 import 'package:proxima_parada_mobile/pages/welcome.dart';
-import 'package:proxima_parada_mobile/theme/theme.dart'; // Importe o arquivo de temas
+import 'package:proxima_parada_mobile/theme/theme.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: "lib/.env");
@@ -19,13 +19,11 @@ Future<void> main() async {
     ),
   );
 
-  final currentUser = await FirebaseService().getCurrentUser();
+  final currentUser = FirebaseService.getCurrentUser();
 
   runApp(MaterialApp(
     home: currentUser != null ?  const Home() :  const Welcome(),
-    debugShowCheckedModeBanner: true,
-    theme: AppThemes.lightTheme, // Use o tema claro
-    // darkTheme: AppThemes.darkTheme,
-    // themeMode: ThemeMode.system,
+    debugShowCheckedModeBanner: false,
+    theme: AppThemes.lightTheme,
   ));
 }

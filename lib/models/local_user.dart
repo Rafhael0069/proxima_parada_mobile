@@ -1,23 +1,25 @@
-import 'package:proxima_parada_mobile/models/user_vehicler.dart';
+import 'package:proxima_parada_mobile/models/user_vehicle.dart';
 
+// Classe que representa um usuáriolocal
 class LocalUser {
-  String? idUser;
-  String? name;
-  String? phoneNumber;
-  String? imageLocation;
-  String? email;
-  bool isDriver = false;
-  bool isRequestBeDriveOpen = false;
-  bool isRequestDenied = false;
-  UserVehicle? userVehicle;
-  // Timestamp? createdAt;
-  // Timestamp? updatedAt;
+  String? idUser; // ID do usuário
+  String? name; // Nome do usuário
+  String? phoneNumber; // Número de telefone do usuário
+  String? imageLocation; // URL da imagem do usuário
+  String? email; // Email do usuário
+  bool isDriver = false; // Indica se o usuário é um motorista
+  bool isRequestBeDriverOpen = false; // Indica se o usuário tem uma solicitação para ser passageiro aberta
+  bool isRequestDenied = false; // Indica se a solicitação do usuário para ser passageiro foi negada
+  UserVehicle? userVehicle; // Informações do veículo do usuário (se for um motorista)
 
+  // Construtor da classe
   LocalUser(this.name, this.phoneNumber, this.email, this.userVehicle,
       [this.idUser, this.imageLocation]);
 
+  //Construtor para criar um usuário vazio
   LocalUser.empty();
 
+  // Construtor para criar um usuário a partir de um mapa (ex: dados do Firestore)
   LocalUser.fromMap(Map<String, dynamic> doc) {
     idUser = doc["idUser"];
     name = doc["name"];
@@ -25,31 +27,26 @@ class LocalUser {
     imageLocation = doc["imageLocation"];
     email = doc["email"];
     isDriver = doc["isDriver"];
-    isRequestBeDriveOpen = doc["isRequestBeDriveOpen"];
+    isRequestBeDriverOpen = doc["isRequestBeDriveOpen"];
     isRequestDenied = doc["isRequestDenied"];
     userVehicle = UserVehicle.fromMap(doc["userVehicle"]);
-    // createdAt = doc["createdAt"];
-    // updatedAt = doc["updatedAt"];
   }
 
+  // Converte o usuário para um mapa (ex: para salvar no Firestore)
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
+    return {
       "idUser": idUser,
       "name": name,
       "phone": phoneNumber,
       "imageLocation": imageLocation,
       "email": email,
       "isDriver": isDriver,
-      "isRequestBeDriveOpen": isRequestBeDriveOpen,
+      "isRequestBeDriveOpen": isRequestBeDriverOpen,
       "isRequestDenied": isRequestDenied,
       "userVehicle": userVehicle?.toMap(),
-      // "createdAt": createdAt,
-      // "updatedAt": updatedAt,
     };
-    return map;
   }
 
-  set setLocationImage(String value) {
-    imageLocation = value;
-  }
+  // Setter para a URL da imagem do usuário
+  set setLocationImage(String value) => imageLocation = value;
 }

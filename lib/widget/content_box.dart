@@ -10,7 +10,7 @@ class ContentBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Stack(

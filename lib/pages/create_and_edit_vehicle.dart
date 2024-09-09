@@ -1,12 +1,14 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
+import 'package:proxima_parada_mobile/services/firebase_service.dart';
+import 'package:proxima_parada_mobile/services/image_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
-import 'package:proxima_parada_mobile/models/user_vehicler.dart';
+import 'package:proxima_parada_mobile/models/user_vehicle.dart';
+import 'package:proxima_parada_mobile/utils/form_utils.dart';
 import 'package:proxima_parada_mobile/utils/upper_case_text_formater.dart';
+import 'package:proxima_parada_mobile/widget/custom_text_form_field.dart';
 
 class CreateAndEditVehicle extends StatefulWidget {
   final String userId;
@@ -25,13 +27,11 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _colorController = TextEditingController();
   final TextEditingController _plateController = TextEditingController();
-  final FirebaseService _fbServices = FirebaseService();
 
   bool _loading = false;
   String _imageUserStandard =
       'https://firebasestorage.googleapis.com/v0/b/proxima-parada-001.appspot.com/o/images%2Fselect-image-icon.jpg?alt=media&token=46e45aee-da26-4d75-9530-87bbe4c5a78d';
 
-  final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
 
   LocalUser localUser = LocalUser.empty();
@@ -39,34 +39,8 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
 
   @override
   void initState() {
-
-    // _brandController.text = "Volkswagen";
-    // _modelController.text = "Gol";
-    // _colorController.text = "Prata";
-    // _plateController.text = "ABC1234";
-
-    // _brandController.text = "Fiat";
-    // _modelController.text = "Uno";
-    // _colorController.text = "Vermelho";
-    // _plateController.text ="XYZ9876";
-
-    // _brandController.text = "Chevrolet";
-    // _modelController.text = "Onix";
-    // _colorController.text = "Branco";
-    // _plateController.text = "DEF5432";
-
-    // _brandController.text = "Ford";
-    // _modelController.text = "Ka";
-    // _colorController.text = "Preto";
-    // _plateController.text = "GHI8765";
-
-    // _brandController.text = "Hyundai";
-    // _modelController.text = "HB20";
-    // _colorController.text = "Azul";
-    // _plateController.text = "JKL4321";
-
-    _loadUserData();
     super.initState();
+    _loadUserData();
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -82,17 +56,21 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Câmera'),
-                onTap: () {
-                  _selectImage(true);
+                onTap: () async {
+                  _pickedImage =
+                      await ImageService.selectImage(fromCamera: true);
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo),
                 title: const Text('Galeria'),
-                onTap: () {
-                  _selectImage(false);
+                onTap: () async {
+                  _pickedImage =
+                      await ImageService.selectImage(fromCamera: false);
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
             ],
@@ -102,79 +80,68 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
     );
   }
 
-  Future _selectImage(bool camera) async {
-    XFile? selectedImage;
-    if (camera) {
-      selectedImage = await _picker.pickImage(source: ImageSource.camera);
-    } else {
-      selectedImage = await _picker.pickImage(source: ImageSource.gallery);
-    }
-    setState(() {
-      _pickedImage = selectedImage;
-    });
-  }
-
   void _loadUserData() async {
     try {
       DocumentSnapshot? userData =
-          await _fbServices.getUserData(widget.userId, context);
+          await FirebaseService.getUserData(widget.userId, context);
       if (userData != null && userData.exists) {
-        localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
-        userVehicle = localUser.userVehicle!;
-        if (userVehicle.plate != null) {
-          setState(() {
-            _brandController.text = userVehicle.brand!;
-            _modelController.text = userVehicle.model!;
-            _colorController.text = userVehicle.color!;
-            _plateController.text = userVehicle.plate!;
-            _imageUserStandard = userVehicle.imageLocation!;
-          });
-        }
+        setState(() {
+          localUser =
+              LocalUser.fromMap(userData.data() as Map<String, dynamic>);
+          userVehicle = localUser.userVehicle ?? UserVehicle.empty();
+          _brandController.text = userVehicle.brand ?? '';
+          _modelController.text = userVehicle.model ?? '';
+          _colorController.text = userVehicle.color ?? '';
+          _plateController.text = userVehicle.plate ?? '';
+          _imageUserStandard = userVehicle.imageLocation ?? _imageUserStandard;
+        });
       }
     } catch (e) {
-      print('Erro ao carregar os dados do usuário: $e');
+      showSnackBar(context, 'Erro ao carregar os dados do usuário: $e');
     }
   }
 
-  _submitForm(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _loading = true);
-      if (_pickedImage != null) {
-        final urlImage = await _fbServices
-            .uploadImage(localUser, _pickedImage!.path, isCar: true);
-        userVehicle.imageLocation = urlImage;
-        _saveChanges();
-      } else {
-        _saveChanges();
-      }
-    } else {
+  void _submitForm(BuildContext context) async {
+    if (!validateForm(_formKey)) {
       setState(() => _loading = false);
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    try {
+      if (_pickedImage != null) {
+        userVehicle.imageLocation = await ImageService.uploadImage(
+            widget.userId, _pickedImage!.path,
+            isCar: true);
+      }
+      _saveChanges();
+    } catch (e) {
+      setState(() => _loading = false);
+      showSnackBar(
+          context, 'Erro ao salvar as alterações. Tente novamente mais tarde.');
     }
   }
 
   void _saveChanges() async {
-    userVehicle.brand = _brandController.text;
-    userVehicle.model = _modelController.text;
-    userVehicle.color = _colorController.text;
-    userVehicle.plate = _plateController.text;
-    try {
-      localUser.userVehicle = userVehicle;
-      await _fbServices.updateUserData(widget.userId, localUser, context);
+    userVehicle
+      ..brand = _brandController.text
+      ..model = _modelController.text
+      ..color = _colorController.text
+      ..plate = _plateController.text;
 
-      // Mostrar uma mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Informações atualizadas com sucesso!'),
-      ));
+    localUser.userVehicle = userVehicle;
+
+    try {
+      await FirebaseService.updateUserData(widget.userId, localUser, context);
+      showSnackBar(context, 'Informações atualizadas com sucesso!');
+      Navigator.pop(context);
     } catch (e) {
-      setState(() => _loading = false);
-      // Mostrar uma mensagem de erro
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text('Erro ao salvar as alterações. Tente novamente mais tarde.'),
-      ));
+      showSnackBar(
+          context, 'Erro ao salvar as alterações. Tente novamente mais tarde.');
     }
+
     setState(() => _loading = false);
-    Navigator.pop(context);
   }
 
   @override
@@ -182,123 +149,78 @@ class _CreateAndEditVehicleState extends State<CreateAndEditVehicle> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            userVehicle.plate != null ? "Editar veículo" : "Salvar veículo"),
+          userVehicle.plate != null ? "Editar veículo" : "Salvar veículo",
+          style: const TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
-        child: Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: GestureDetector(
-                      onTap: () => _showBottomSheet(context),
-                      child: _pickedImage != null
-                          ? Image(
-                              image: FileImage(File(_pickedImage!.path)),
-                              width: 350,
-                              height: 350,
-                            )
-                          : Image(
-                              image: NetworkImage(_imageUserStandard),
-                              width: 350,
-                              height: 350,
-                            ),
-                    )),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: TextFormField(
-                            controller: _brandController,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            decoration:
-                                const InputDecoration(labelText: 'Marca'),
-                          ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => _showBottomSheet(context),
+                child: _pickedImage != null
+                    ? Image.file(File(_pickedImage!.path),
+                        width: 350, height: 350)
+                    : Image.network(_imageUserStandard,
+                        width: 350, height: 350),
+              ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    CustomTextFormField(
+                      controller: _brandController,
+                      labelText: 'Marca',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextFormField(
+                      controller: _modelController,
+                      labelText: 'Modelo',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextFormField(
+                      controller: _colorController,
+                      labelText: 'Cor',
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextFormField(
+                      controller: _plateController,
+                      labelText: 'Placa',
+                      textInputAction: TextInputAction.done,
+                      inputFormatters: [UpperCaseTextFormatter()],
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: ElevatedButton(
+                        onPressed: () => _submitForm(context),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(45),
+                          backgroundColor: Colors.blue,
                         ),
+                        child: _loading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : Text(
+                                userVehicle.plate != null
+                                    ? 'Salvar Alterações'
+                                    : 'Salvar Veículo',
+                                style: const TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              ),
                       ),
-                      Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: TextFormField(
-                            controller: _modelController,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            decoration:
-                                const InputDecoration(labelText: 'Modelo'),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: TextFormField(
-                            controller: _colorController,
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            decoration: const InputDecoration(labelText: 'Cor'),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: TextFormField(
-                            controller: _plateController,
-                            textInputAction: TextInputAction.done,
-                            keyboardType: TextInputType.text,
-                            inputFormatters: [
-                              UpperCaseTextFormatter(),
-                            ],
-                            decoration:
-                                const InputDecoration(labelText: 'Placa'),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: ElevatedButton(
-                          onPressed: () => _submitForm(context),
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(45)),
-                          child: _loading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.blue,
-                                )
-                              : Text(
-                                  userVehicle.plate != null
-                                      ? 'Salvar Alterações'
-                                      : 'Salvar Veículo',
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

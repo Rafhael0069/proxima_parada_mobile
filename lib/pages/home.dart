@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
+import 'package:proxima_parada_mobile/services/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
-import 'package:proxima_parada_mobile/pages/welcome.dart';
 import 'package:proxima_parada_mobile/screens/feed_page.dart';
 import 'package:proxima_parada_mobile/screens/my_rides_page.dart';
 import 'package:proxima_parada_mobile/screens/profile_page.dart';
-import 'package:proxima_parada_mobile/utils/show_alert_dialog.dart';
+import 'package:proxima_parada_mobile/utils/menu_utils.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,75 +17,52 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  final FirebaseService _fbServices = FirebaseService();
   bool _isRideVisible = false;
-  late List<Widget> _screens = _isRideVisible
-      ? <Widget>[
-          FeedPage(
-            idUser: currentUser!.uid,
-          ),
-          MyRidesPage(
-            idUser: currentUser!.uid,
-          ),
-          ProfilePage(
-            idUser: currentUser!.uid,
-          ),
-        ]
-      : <Widget>[
-          FeedPage(
-            idUser: currentUser!.uid,
-          ),
-          ProfilePage(
-            idUser: currentUser!.uid,
-          ),
-        ];
-
-  late LocalUser localUser;
   var currentUser = FirebaseAuth.instance.currentUser;
+  late List<Widget> _screens;
 
   @override
   void initState() {
-    _loadUserData();
     super.initState();
+    _initializeScreens();
+    _loadUserData();
   }
 
+  // Inicializa a lista de telas com base no estado de visibilidade de rides
+  void _initializeScreens() {
+    _screens = [
+      FeedPage(idUser: currentUser!.uid),
+      ProfilePage(idUser: currentUser!.uid),
+    ];
+  }
+
+  // Carrega os dados do usuário e atualiza a visibilidade de rides
   void _loadUserData() async {
     try {
       DocumentSnapshot? userData =
-          await _fbServices.getUserData(currentUser!.uid, context);
+      await FirebaseService.getUserData(currentUser!.uid, context);
       if (userData != null && userData.exists) {
-        localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
+        LocalUser localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
         setState(() {
           _isRideVisible = localUser.isDriver;
           _screens = _isRideVisible
               ? <Widget>[
-                  FeedPage(
-                    idUser: currentUser!.uid,
-                  ),
-                  MyRidesPage(
-                    idUser: currentUser!.uid,
-                  ),
-                  ProfilePage(
-                    idUser: currentUser!.uid,
-                  ),
-                ]
+            FeedPage(idUser: currentUser!.uid),
+            MyRidesPage(idUser: currentUser!.uid),
+            ProfilePage(idUser: currentUser!.uid),
+          ]
               : <Widget>[
-                  FeedPage(
-                    idUser: currentUser!.uid,
-                  ),
-                  ProfilePage(
-                    idUser: currentUser!.uid,
-                  ),
-                ];
+            FeedPage(idUser: currentUser!.uid),
+            ProfilePage(idUser: currentUser!.uid),
+          ];
         });
       }
     } catch (e) {
-      print('Erro ao carregar os dados do usuário: $e');
+      // print('Erro ao carregar os dados do usuário: $e');
     }
   }
 
-  // var currentUser =  _fbServices.getCurrentUser();
-
+  // Atualiza o índice selecionado no BottomNavigationBar
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -97,38 +73,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Próxima Parada"),
+        title: const Text(
+          "Próxima Parada",
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        backgroundColor: Colors.blue,
         actions: <Widget>[
           PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'settings') {
-                ShowAlertDialog.showAlertDialog(
-                    context, "Ainda não implementado :(");
-              } else if (value == 'logout') {
-                FirebaseAuth auth = FirebaseAuth.instance;
-                auth.signOut();
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Welcome()),
-                    (Route<dynamic> route) => false);
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'settings',
-                child: ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Configurações'),
-                ),
-              ),
-              const PopupMenuItem<String>(
-                value: 'logout',
-                child: ListTile(
-                  leading: Icon(Icons.exit_to_app),
-                  title: Text('Sair'),
-                ),
-              ),
-            ],
+            onSelected: (value) => MenuUtils.onMenuItemSelected(context, value),
+            itemBuilder: (BuildContext context) => MenuUtils.buildMenuItems(),
           ),
         ],
       ),
@@ -139,12 +92,19 @@ class _HomeState extends State<Home> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: [
-          const BottomNavigationBarItem(icon: Icon(Icons.feed), label: "feed"),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.feed, size: 24, color: Colors.blue),
+            label: "Feed",
+          ),
           if (_isRideVisible)
             const BottomNavigationBarItem(
-                icon: Icon(Icons.post_add), label: "minhas caronas"),
+              icon: Icon(Icons.post_add, size: 24, color: Colors.blue),
+              label: "Minhas Caronas",
+            ),
           const BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: "perfil"),
+            icon: Icon(Icons.person, size: 24, color: Colors.blue),
+            label: "Perfil",
+          ),
         ],
       ),
     );

@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:proxima_parada_mobile/firebase/firebase_service.dart';
+import 'package:proxima_parada_mobile/services/firebase_service.dart';
 import 'package:proxima_parada_mobile/models/local_user.dart';
 import 'package:proxima_parada_mobile/models/publication.dart';
 import 'package:proxima_parada_mobile/utils/date_time_formator.dart';
+import 'package:proxima_parada_mobile/utils/publication_helper.dart';
 
 class CreateAndEditPost extends StatefulWidget {
   final String idUser;
   final Publication? existentPublication;
 
-  const CreateAndEditPost(
-      {super.key, required this.idUser, this.existentPublication});
+  const CreateAndEditPost({
+    super.key,
+    required this.idUser,
+    this.existentPublication,
+  });
 
   @override
   State<CreateAndEditPost> createState() => _CreateAndEditPostState();
@@ -19,193 +22,48 @@ class CreateAndEditPost extends StatefulWidget {
 
 class _CreateAndEditPostState extends State<CreateAndEditPost> {
   final TextEditingController _originCityController = TextEditingController();
-  final TextEditingController _originNeighborhoodController =
-      TextEditingController();
+  final TextEditingController _originNeighborhoodController = TextEditingController();
   final TextEditingController _originStreetController = TextEditingController();
   final TextEditingController _originNumberController = TextEditingController();
-  final TextEditingController _destinationCityController =
-      TextEditingController();
-  final TextEditingController _destinationNeighborhoodController =
-      TextEditingController();
-  final TextEditingController _destinationStreetController =
-      TextEditingController();
-  final TextEditingController _destinationNumberController =
-      TextEditingController();
-  final TextEditingController _departureDateController =
-      TextEditingController();
-  final TextEditingController _departureTimeController =
-      TextEditingController();
+  final TextEditingController _destinationCityController = TextEditingController();
+  final TextEditingController _destinationNeighborhoodController = TextEditingController();
+  final TextEditingController _destinationStreetController = TextEditingController();
+  final TextEditingController _destinationNumberController = TextEditingController();
+  final TextEditingController _departureDateController = TextEditingController();
+  final TextEditingController _departureTimeController = TextEditingController();
 
   LocalUser? localUser;
-  final FirebaseService _fbServices = FirebaseService();
   late bool newPublication;
   late Publication publicationData;
 
   @override
   void initState() {
-    newPublication = widget.existentPublication != null ? false : true;
+    super.initState();
+    newPublication = widget.existentPublication == null;
     if (!newPublication) {
       publicationData = widget.existentPublication!;
-      _originCityController.text = publicationData.originCity!;
-      _originNeighborhoodController.text = publicationData.originNeighborhood!;
-      _originStreetController.text = publicationData.originStreet!;
-      _originNumberController.text = publicationData.originNumber!;
-      _destinationCityController.text = publicationData.destinationCity!;
-      _destinationNeighborhoodController.text =
-          publicationData.destinationNeighborhood!;
-      _destinationStreetController.text = publicationData.destinationStreet!;
-      _destinationNumberController.text = publicationData.destinationNumber!;
-      _departureDateController.text = publicationData.departureDate!;
-      _departureTimeController.text = publicationData.departureTime!;
-    } else {
-      var dadosExemplo = [
-        {
-          "originCity": "London",
-          "originNeighborhood": "Westminster",
-          "originStreet": "Abbey Road",
-          "originNumber": "10",
-          "destinationCity": "Paris",
-          "destinationNeighborhood": "Montmartre",
-          "destinationStreet": "Rue de Rivoli",
-          "destinationNumber": "20",
-          "departureDate": "05/09/2024",
-          "departureTime": "01:30 PM"
-        },
-        {
-          "originCity": "Tokyo",
-          "originNeighborhood": "Shinjuku",
-          "originStreet": "Kabukicho",
-          "originNumber": "7-1",
-          "destinationCity": "Kyoto",
-          "destinationNeighborhood": "Gion",
-          "destinationStreet": "Hanamikoji Dori",
-          "destinationNumber": "15",
-          "departureDate": "05/09/2024",
-          "departureTime": "02:30 PM"
-        },
-        {
-          "originCity": "Sydney",
-          "originNeighborhood": "Circular Quay",
-          "originStreet": "George Street",
-          "originNumber": "30",
-          "destinationCity": "Melbourne",
-          "destinationNeighborhood": "Fitzroy",
-          "destinationStreet": "Brunswick Street",
-          "destinationNumber": "40",
-          "departureDate": "05/09/2024",
-          "departureTime": "02:00 PM"
-        },
-        {
-          "originCity": "Rome",
-          "originNeighborhood": "Trastevere",
-          "originStreet": "Via della Lungara",
-          "originNumber": "55",
-          "destinationCity": "Venice",
-          "destinationNeighborhood": "San Marco",
-          "destinationStreet": "Piazza San Marco",
-          "destinationNumber": "25",
-          "departureDate": "05/09/2024",
-          "departureTime": "03:30 PM"
-        },
-        {
-          "originCity": "Berlin",
-          "originNeighborhood": "Mitte",
-          "originStreet": "Alexanderplatz",
-          "originNumber": "70",
-          "destinationCity": "Munich",
-          "destinationNeighborhood": "Schwabing",
-          "destinationStreet": "Leopoldstraße",
-          "destinationNumber": "80",
-          "departureDate": "05/09/2024",
-          "departureTime": "03:00 PM"
-        },
-        {
-          "originCity": "Madrid",
-          "originNeighborhood": "Sol",
-          "originStreet": "Gran Vía",
-          "originNumber": "90",
-          "destinationCity": "Barcelona",
-          "destinationNeighborhood": "Gothic Quarter",
-          "destinationStreet": "La Rambla",
-          "destinationNumber": "100",
-          "departureDate": "05/09/2024",
-          "departureTime": "04:30 PM"
-        },
-        {
-          "originCity": "Toronto",
-          "originNeighborhood": "Downtown",
-          "originStreet": "Yonge Street",
-          "originNumber": "110",
-          "destinationCity": "Vancouver",
-          "destinationNeighborhood": "Gastown",
-          "destinationStreet": "Water Street",
-          "destinationNumber": "120",
-          "departureDate": "05/09/2024",
-          "departureTime": "04:00 PM"
-        },
-        {
-          "originCity": "Dubai",
-          "originNeighborhood": "Downtown Dubai",
-          "originStreet": "Sheikh Zayed Road",
-          "originNumber": "130",
-          "destinationCity": "Abu Dhabi",
-          "destinationNeighborhood": "Corniche",
-          "destinationStreet": "Corniche Road",
-          "destinationNumber": "140",
-          "departureDate": "05/09/2024",
-          "departureTime": "05:30 PM"
-        },
-        {
-          "originCity": "Seoul",
-          "originNeighborhood": "Gangnam",
-          "originStreet": "Gangnam-daero",
-          "originNumber": "150",
-          "destinationCity": "Busan",
-          "destinationNeighborhood": "Haeundae",
-          "destinationStreet": "Haeundae-ro",
-          "destinationNumber": "160",
-          "departureDate": "05/09/2024",
-          "departureTime": "05:00 PM"
-        },
-        {
-          "originCity": "Moscow",
-          "originNeighborhood": "Red Square",
-          "originStreet": "Kremlin Embankment",
-          "originNumber": "170",
-          "destinationCity": "Saint Petersburg",
-          "destinationNeighborhood": "Nevsky Prospekt",
-          "destinationStreet": "Nevsky Avenue",
-          "destinationNumber": "180",
-          "departureDate": "05/09/2024",
-          "departureTime": "06:30 PM"
-        }
-      ];
-      int index = 5;
-      _originCityController.text = dadosExemplo[index]["originCity"]!;
-      _originNeighborhoodController.text =
-          dadosExemplo[index]["originNeighborhood"]!;
-      _originStreetController.text = dadosExemplo[index]["originStreet"]!;
-      _originNumberController.text = dadosExemplo[index]["originNumber"]!;
-      _destinationCityController.text = dadosExemplo[index]["destinationCity"]!;
-      _destinationNeighborhoodController.text =
-          dadosExemplo[index]["destinationNeighborhood"]!;
-      _destinationStreetController.text =
-          dadosExemplo[index]["destinationStreet"]!;
-      _destinationNumberController.text =
-          dadosExemplo[index]["destinationNumber"]!;
-      _departureDateController.text = dadosExemplo[index]["departureDate"]!;
-      _departureTimeController.text = dadosExemplo[index]["departureTime"]!;
+      _initializeControllersWithExistingData(publicationData);
     }
     _loadUserData();
-    super.initState();
+  }
+
+  void _initializeControllersWithExistingData(Publication publication) {
+    _originCityController.text = publication.originCity!;
+    _originNeighborhoodController.text = publication.originNeighborhood!;
+    _originStreetController.text = publication.originStreet!;
+    _originNumberController.text = publication.originNumber!;
+    _destinationCityController.text = publication.destinationCity!;
+    _destinationNeighborhoodController.text = publication.destinationNeighborhood!;
+    _destinationStreetController.text = publication.destinationStreet!;
+    _destinationNumberController.text = publication.destinationNumber!;
+    _departureDateController.text = publication.departureDate!;
+    _departureTimeController.text = publication.departureTime!;
   }
 
   void _loadUserData() async {
     try {
-      DocumentSnapshot? userData =
-          await _fbServices.getUserData(widget.idUser, context);
+      DocumentSnapshot? userData = await FirebaseService.getUserData(widget.idUser, context);
       if (userData != null && userData.exists) {
-        // Map<String, dynamic> userDataMap = userData.data() as Map<String, dynamic>;
         localUser = LocalUser.fromMap(userData.data() as Map<String, dynamic>);
       }
     } catch (e) {
@@ -213,28 +71,32 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
     }
   }
 
-  Timestamp converterDataHoraParaTimestamp(
-      String dataString, String horaString) {
-    DateFormat dateFormat = DateFormat("dd/MM/yyyy");
-    DateFormat timeFormat = DateFormat("hh:mm a");
-
-    DateTime data = dateFormat.parse(dataString);
-    DateTime hora = timeFormat.parse(horaString);
-
-    DateTime dataHoraCombinada = DateTime(
-      data.year,
-      data.month,
-      data.day,
-      hora.hour,
-      hora.minute,
-    );
-
-    return Timestamp.fromDate(dataHoraCombinada);
+  // Valida se todos os campos obrigatórios foram preenchidos
+  bool _validateFields() {
+    if (_originCityController.text.isEmpty ||
+        _originNeighborhoodController.text.isEmpty ||
+        _originStreetController.text.isEmpty ||
+        _originNumberController.text.isEmpty ||
+        _destinationCityController.text.isEmpty ||
+        _destinationNeighborhoodController.text.isEmpty ||
+        _destinationStreetController.text.isEmpty ||
+        _destinationNumberController.text.isEmpty ||
+        _departureDateController.text.isEmpty ||
+        _departureTimeController.text.isEmpty) {
+      _showSnackBar('Por favor, preencha todos os campos obrigatórios.');
+      return false;
+    }
+    return true;
   }
 
-  _createPublication() async {
-    Timestamp timestamp = converterDataHoraParaTimestamp(
-        _departureDateController.text, _departureTimeController.text);
+  Future<void> _createOrUpdatePublication() async {
+    if (!_validateFields()) return; // Valida os campos antes de prosseguir
+
+    // Converte data e hora para Timestamp (método movido para PublicationHelper)
+    Timestamp timestamp = PublicationHelper.converterDataHoraParaTimestamp(
+      _departureDateController.text,
+      _departureTimeController.text,
+    );
 
     Publication publication = Publication(
       localUser!.idUser,
@@ -256,40 +118,79 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
       true,
       updatedDate: DateTime.now().toString(),
     );
+
     if (!newPublication) {
       publication.registrationDate = publicationData.registrationDate;
       publication.idPublication = publicationData.idPublication;
     } else {
       publication.registrationDate = DateTime.now().toString();
     }
+
     try {
       if (!newPublication) {
-        await _fbServices.savePublicationData(publication, context,
-            update: publication.toMap());
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Carona atualizada com sucesso!'),
-        ));
-      } else {
-        await _fbServices.savePublicationData(
+        await FirebaseService.savePublicationData(
           publication,
           context,
+          update: publication.toMap(),
         );
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Carona criada com sucesso!'),
-        ));
+        _showSnackBar('Carona atualizada com sucesso!');
+      } else {
+        await FirebaseService.savePublicationData(publication, context);
+        _showSnackBar('Carona criada com sucesso!');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Erro ao salvar a postagem. Tente novamente mais tarde.'),
-      ));
+      _showSnackBar('Erro ao salvar a postagem. Tente novamente mais tarde.');
     }
     Navigator.pop(context);
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    TextInputAction textInputAction = TextInputAction.next,
+    TextInputType keyboardType = TextInputType.text,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: TextField(
+        controller: controller,
+        textInputAction: textInputAction,
+        keyboardType: keyboardType,
+        readOnly: readOnly,
+        onTap: onTap,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(fontSize: 16, color: Colors.grey),
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Creação de Postagem")),
+      appBar: AppBar(
+        title: const Text(
+          "Criação de Postagem",
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        backgroundColor: Colors.blue,
+      ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -300,74 +201,64 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
                 padding: EdgeInsets.symmetric(vertical: 6),
                 child: Text(
                   "Origem",
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 24, color: Colors.black),
                 ),
               ),
-              TextField(
+              _buildTextField(
                 controller: _originCityController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Cidade"),
+                label: "Cidade",
               ),
-              TextField(
+              _buildTextField(
                 controller: _originNeighborhoodController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Bairro"),
+                label: "Bairro",
               ),
-              TextField(
+              _buildTextField(
                 controller: _originStreetController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Rua"),
+                label: "Rua",
               ),
-              TextField(
+              _buildTextField(
                 controller: _originNumberController,
-                textInputAction: TextInputAction.next,
+                label: "Número",
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Numero"),
               ),
               Row(
                 children: [
                   Flexible(
-                    child: TextField(
+                    child: _buildTextField(
                       controller: _departureDateController,
-                      // keyboardType: TextInputType.datetime,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: "Data da partida",
-                      ),
+                      label: "Data da partida",
+                      readOnly: true,
                       onTap: () async {
-                        DateTime? date = DateTime(1900);
-                        FocusScope.of(context).requestFocus(FocusNode());
-                        date = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime(2100));
-                        _departureDateController.text =
-                            DateTimeFormater.formatDataTime(
-                                date.toString(), "D");
+                        DateTime? date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime(2100),
+                        );
+                        if (date != null) {
+                          _departureDateController.text =
+                              DateTimeFormater.formatDataTime(
+                                  date.toString(), "D");
+                        }
                       },
                     ),
                   ),
                   const SizedBox(width: 10),
                   Flexible(
-                    child: TextField(
+                    child: _buildTextField(
                       controller: _departureTimeController,
-                      // keyboardType: TextInputType.datetime,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: "Hora da partida",
-                      ),
+                      label: "Hora da partida",
+                      readOnly: true,
                       onTap: () async {
-                        TimeOfDay? time =
-                            TimeOfDay.fromDateTime(DateTime.now());
-                        FocusScope.of(context).requestFocus(FocusNode());
-                        time = await showTimePicker(
+                        TimeOfDay? time = await showTimePicker(
                           context: context,
-                          initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+                          initialTime: TimeOfDay.now(),
                         );
-                        final localizations = MaterialLocalizations.of(context);
-                        _departureTimeController.text =
-                            localizations.formatTimeOfDay(time!);
+                        if (time != null) {
+                          final localizations = MaterialLocalizations.of(context);
+                          _departureTimeController.text =
+                              localizations.formatTimeOfDay(time);
+                        }
                       },
                     ),
                   ),
@@ -377,41 +268,38 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   "Destino",
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 24, color: Colors.black),
                 ),
               ),
-              TextField(
+              _buildTextField(
                 controller: _destinationCityController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Cidade"),
+                label: "Cidade",
               ),
-              TextField(
+              _buildTextField(
                 controller: _destinationNeighborhoodController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Bairro"),
+                label: "Bairro",
               ),
-              TextField(
+              _buildTextField(
                 controller: _destinationStreetController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Rua"),
+                label: "Rua",
               ),
-              TextField(
+              _buildTextField(
                 controller: _destinationNumberController,
-                textInputAction: TextInputAction.done,
+                label: "Número",
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "Numero"),
+                textInputAction: TextInputAction.done,
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: ElevatedButton(
-                  onPressed: _createPublication,
+                  onPressed: _createOrUpdatePublication,
                   style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(45)),
+                    minimumSize: const Size.fromHeight(45),
+                    backgroundColor: Colors.blue, // Cor do botão
+                  ),
                   child: const Text(
                     "Salvar",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ),
               ),
@@ -422,3 +310,4 @@ class _CreateAndEditPostState extends State<CreateAndEditPost> {
     );
   }
 }
+

@@ -1,28 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
+// Classe querepresenta uma publicação de carona
 class Publication {
-  String? idUser;
-  String idPublication = const Uuid().v6();
-  String? userName;
-  String? userPhoneNumber;
-  String? userLocationImage;
-  String? originCity;
-  String? originNeighborhood;
-  String? originStreet;
-  String? originNumber;
-  String? destinationCity;
-  String? destinationNeighborhood;
-  String? destinationStreet;
-  String? destinationNumber;
-  String? departureDate;
-  String? departureTime;
-  Timestamp? departureDateTime;
-  bool? statusPublication;
-  bool? vacancies;
-  String? registrationDate;
-  String? updatedDate;
+  String? idUser; // ID do usuário que criou a publicação
+  String idPublication = const Uuid().v6(); // ID da publicação (gerado automaticamente)
+  String? userName; // Nome do usuário
+  String? userPhoneNumber;// Número de telefone do usuário
+  String? userLocationImage; // URL da imagem do usuário
+  String? originCity; // Cidade de origem
+  String? originNeighborhood; // Bairro de origem
+  String? originStreet; // Rua de origem
+  String? originNumber; // Número do endereço de origem
+  String? destinationCity; // Cidade de destino
+  String? destinationNeighborhood; // Bairro de destino
+  String? destinationStreet; // Rua de destino
+  String? destinationNumber; // Número do endereço de destino
+  String? departureDate; // Data de partida (formato string)
+  String? departureTime; // Hora de partida (formato string)
+  Timestamp? departureDateTime; // Data e hora de partida (Timestamp)
+  bool? statusPublication; // Status da publicação (ativa/inativa)
+  bool? vacancies; // Indica se há vagas disponíveis
+  String? registrationDate; // Data de registro da publicação
+  String? updatedDate; // Data da última atualização da publicação
 
+  // Construtor da classe
   Publication(
       this.idUser,
       this.userName,
@@ -42,9 +44,10 @@ class Publication {
       this.statusPublication,
       this.vacancies,
       {this.registrationDate,
-      this.updatedDate});
+        this.updatedDate});
 
-  Publication.fromMap(QueryDocumentSnapshot doc) {
+  // Construtor para criar uma publicação a partir de um QueryDocumentSnapshot (Firestore)
+  Publication.fromQueryDocumentSnapshot(QueryDocumentSnapshot doc) {
     idUser = doc["idUser"];
     idPublication = doc["idPublication"];
     userName = doc["userName"];
@@ -67,6 +70,7 @@ class Publication {
     updatedDate = doc["updatedDate"];
   }
 
+  // Construtor para criar uma publicação a partir de um DocumentSnapshot (Firestore)
   Publication.fromDocumentSnapshot(DocumentSnapshot doc) {
     idUser = doc["idUser"];
     idPublication = doc["idPublication"];
@@ -90,9 +94,11 @@ class Publication {
     updatedDate = doc["updatedDate"];
   }
 
+  // Converte a publicação para um mapa (ex: para salvar no Firestore)
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
+    return {
       "idUser": idUser,
+      "idPublication": idPublication,
       "userName": userName,
       "userPhoneNumber": userPhoneNumber,
       "userLocationImage": userLocationImage,
@@ -112,6 +118,5 @@ class Publication {
       "registrationDate": registrationDate,
       "updatedDate": updatedDate,
     };
-    return map;
   }
 }

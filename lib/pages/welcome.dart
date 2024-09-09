@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:proxima_parada_mobile/pages/signin.dart';
-import 'package:proxima_parada_mobile/pages/signup.dart';
-import 'package:proxima_parada_mobile/utils/exit.dart';
+import 'package:flutter/services.dart';
+import 'package:proxima_parada_mobile/pages/sign_in.dart';
+import 'package:proxima_parada_mobile/pages/sign_up.dart';
+import 'package:proxima_parada_mobile/widget/custom_button.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({Key? key}) : super(key: key);
@@ -11,30 +12,33 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
-  final AssetImage _imageLogo = const AssetImage("assets/images/logo.png");
+  DateTime? _lastPressed;
+
+  void _onPopInvoked(bool didPop) {
+    if (!didPop && (_lastPressed == null || DateTime.now().difference(_lastPressed!) > const Duration(seconds: 2))) {
+      // Primeira pressionada ou pressionada após 2 segundos
+      _lastPressed = DateTime.now();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pressione novamente para sair')),
+      );
+    } else {
+      SystemNavigator.pop(); // Fecha o aplicativo
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    DateTime timeBackPressed = DateTime.now();
     return PopScope(
       canPop: true,
-      onPopInvoked: (didPop) {
-        final difference = DateTime.now().difference(timeBackPressed);
-        final isExitWarning = difference >= const Duration(seconds: 2);
-        timeBackPressed = DateTime.now();
-        // Exit().isExitToDoubleTouch(isExitWarning);
-        if (!Exit().isExitToDoubleTouch(isExitWarning)) {
-          didPop; // Interrompe a ação de voltar no primeiro toque
-        }
-      },
+      onPopInvoked: _onPopInvoked,
       child: Scaffold(
         body: Container(
-          color: const Color.fromARGB(255, 234, 234, 234),
+          color: const Color(0xFFEAEAEA), // Cor de fundo conforme o padrão
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image(
-                  image: _imageLogo,
+                Image.asset(
+                  "assets/images/logo.png",
                   width: 250,
                 ),
                 const Padding(
@@ -43,38 +47,34 @@ class _WelcomeState extends State<Welcome> {
                     "O Próxima Parada facilitará o deslocamento entre sua casa e a sua instituição de ensino.",
                     style: TextStyle(
                       fontSize: 20,
+                      color: Colors.black87, // Cor do texto
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: ElevatedButton(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: CustomButton(
+                    text: "Entrar",
                     onPressed: () {
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => const Signin()));
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignIn()),
+                      );
                     },
-                    style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                    child: const Text(
-                      "Entrar",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
                   ),
                 ),
+                const SizedBox(height: 16), // Espaçamento entre botões
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, top: 6, right: 16),
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => const Signup())),
-                    style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-                    child: const Text(
-                      "Cadastra-se",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: CustomButton(
+                    text: "Cadastra-se",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUp()),
+                      );
+                    },
                   ),
                 ),
               ],

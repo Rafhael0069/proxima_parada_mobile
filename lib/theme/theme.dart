@@ -6,7 +6,6 @@ class AppColors {
   static const Color accentColor = Color(0xFF00BCD4); // Ciano de destaque
   static const Color backgroundColor = Color(0xFFF5F5F5); // Cinza claro de fundo
   static const Color errorColor = Color(0xFFF44336); // Vermelho de erro
-// Adicione mais cores conformenecessário
 }
 
 class AppThemes {
@@ -17,13 +16,12 @@ class AppThemes {
     colorScheme: const ColorScheme.light(
       primary: AppColors.primaryColor,
       secondary: AppColors.secondaryColor,
-      // Use 'secondary' para a cor de destaque
     ),
     appBarTheme: const AppBarTheme(
+      iconTheme: IconThemeData(color: Colors.white),
       backgroundColor: AppColors.primaryColor,
-      titleTextStyle: TextStyle(color: Colors.white),
+      titleTextStyle: TextStyle(color: Colors.white,),
     ),
-    // Personalize outros elementos do tema claro aqui
   );
 
   static ThemeData darkTheme = ThemeData(
