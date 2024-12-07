@@ -1,6 +1,6 @@
-# Caronas App
+# Próxima Parada
 
-**Caronas App** é um aplicativo mobile desenvolvido em Flutter, focado em facilitar o compartilhamento de caronas entre usuários. Este projeto foi desenvolvido como parte de um trabalho acadêmico entre os meses de junho e outubro de 2024. O objetivo principal foi implementar um sistema funcional e simplificado utilizando Firebase como back-end.
+**Próxima Parada** é um aplicativo mobile desenvolvido em Flutter, focado em facilitar o compartilhamento de caronas entre usuários. Este projeto foi desenvolvido como parte de um trabalho acadêmico entre os meses de junho e outubro de 2024. O objetivo principal foi implementar um sistema funcional e simplificado utilizando Firebase como back-end.
 
 ---
 
@@ -74,7 +74,7 @@
    flutter pub get
    ```
 4. Configure o Firebase:
-   - Substitua o arquivo `google-services.json` (Android) ou `GoogleService-Info.plist` (iOS) pelo arquivo correspondente ao seu projeto Firebase.
+   - Substitua o arquivo `google-services.json` (Android) pelo arquivo correspondente ao seu projeto Firebase.
 5. Execute o aplicativo:
    ```bash
    flutter run
